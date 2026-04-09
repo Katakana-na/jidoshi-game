@@ -3,242 +3,560 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>自動詞・他動詞 神経衰弱ゲーム｜第30課</title>
+<title>自動詞・他動詞 神経衰弱</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
-  background: #f0f4f8;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-header {
-  background: linear-gradient(135deg, #1e3a5f, #2563eb);
-  color: #fff;
-  width: 100%;
-  padding: 18px 20px;
-  text-align: center;
-}
-header h1 { font-size: 1.4rem; }
-header p { font-size: 0.85rem; opacity: 0.8; margin-top: 4px; }
+  @import url('https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;700&family=Noto+Sans+JP:wght@400;700;900&display=swap');
 
-.controls {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin: 16px 0 8px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-.controls button {
-  padding: 8px 20px;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all .2s;
-}
-.btn-start { background: #2563eb; color: #fff; }
-.btn-start:hover { background: #1d4ed8; }
-.btn-reset { background: #e5e7eb; color: #374151; }
-.btn-reset:hover { background: #d1d5db; }
+  :root {
+    --card-w: 140px;
+    --card-h: 100px;
+    --font-size: 22px;
+    --ruby-size: 11px;
+    --bg: #f0f4ff;
+    --red: #e53935;
+    --blue: #1e88e5;
+    --green: #43a047;
+    --gold: #f9a825;
+    --card-back: #3949ab;
+    --card-front: #ffffff;
+    --matched: #c8e6c9;
+    --shadow: 0 4px 16px rgba(0,0,0,0.13);
+    --radius: 12px;
+  }
 
-.stats {
-  display: flex;
-  gap: 20px;
-  margin: 8px 0 16px;
-  font-size: 0.95rem;
-  color: #374151;
-}
-.stats span { font-weight: 700; color: #2563eb; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-.board {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 10px;
-  max-width: 660px;
-  width: 95%;
-  margin: 0 auto 20px;
-}
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+  }
 
-.card {
-  aspect-ratio: 3 / 4;
-  border-radius: 12px;
-  cursor: pointer;
-  position: relative;
-  perspective: 600px;
-  user-select: none;
-}
-.card-inner {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  transform-style: preserve-3d;
-  transition: transform 0.5s;
-  border-radius: 12px;
-}
-.card.flipped .card-inner { transform: rotateY(180deg); }
-.card.matched .card-inner { transform: rotateY(180deg); }
+  /* ===== HEADER ===== */
+  h1 {
+    font-family: 'Kaisei Decol', serif;
+    font-size: 28px;
+    color: #1a237e;
+    margin-bottom: 10px;
+    text-align: center;
+    letter-spacing: 2px;
+  }
 
-.card-front, .card-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-}
-.card-front {
-  background: linear-gradient(145deg, #3b82f6, #1d4ed8);
-  color: #fff;
-  font-size: 2rem;
-}
-.card-back {
-  transform: rotateY(180deg);
-  padding: 8px;
-  text-align: center;
-  border: 3px solid;
-}
-.card-back.jidoushi {
-  background: #dbeafe;
-  border-color: #3b82f6;
-  color: #1e40af;
-}
-.card-back.tadoushi {
-  background: #fce7f3;
-  border-color: #ec4899;
-  color: #9d174d;
-}
-.card-back .verb { font-size: 1.3rem; line-height: 1.4; }
-.card-back .reading { font-size: 0.75rem; color: #6b7280; margin-top: 4px; }
-.card-back .label {
-  font-size: 0.65rem;
-  padding: 2px 6px;
-  border-radius: 4px;
-  margin-top: 6px;
-}
-.jidoushi .label { background: #bfdbfe; color: #1e40af; }
-.tadoushi .label { background: #fbcfe8; color: #9d174d; }
+  /* ===== CONTROLS ===== */
+  .controls {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 14px 20px;
+    margin-bottom: 14px;
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: center;
+    justify-content: center;
+  }
 
-.card.matched { opacity: 0.5; pointer-events: none; }
-.card.matched .card-back { border-color: #22c55e; }
+  .ctrl-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+  }
 
-.message {
-  text-align: center;
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #16a34a;
-  margin: 12px 0;
-  min-height: 2em;
-}
+  .ctrl-label {
+    font-size: 11px;
+    color: #666;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
 
-.pair-list {
-  max-width: 660px;
-  width: 95%;
-  margin: 0 auto 30px;
-  background: #fff;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.08);
-}
-.pair-list h3 {
-  font-size: 1rem;
-  color: #374151;
-  margin-bottom: 10px;
-  border-bottom: 2px solid #e5e7eb;
-  padding-bottom: 6px;
-}
-.pair-list table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-.pair-list th { background: #f3f4f6; padding: 6px 8px; text-align: center; }
-.pair-list td { padding: 6px 8px; text-align: center; border-bottom: 1px solid #f3f4f6; }
-.pair-list .ji { color: #1e40af; font-weight: 600; }
-.pair-list .ta { color: #9d174d; font-weight: 600; }
+  .btn-row {
+    display: flex;
+    gap: 6px;
+  }
 
-footer {
-  text-align: center;
-  padding: 16px;
-  font-size: 0.78rem;
-  color: #9ca3af;
-}
+  button {
+    font-family: 'Noto Sans JP', sans-serif;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    font-weight: 700;
+    transition: all 0.15s;
+  }
 
-@media (max-width: 500px) {
-  .board { grid-template-columns: repeat(4, 1fr); gap: 6px; }
-  .card-back .verb { font-size: 1.1rem; }
-  .card-front { font-size: 1.5rem; }
-}
+  .btn-count {
+    background: #e8eaf6;
+    color: #3949ab;
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+  .btn-count.active {
+    background: #3949ab;
+    color: white;
+  }
+  .btn-count:hover { opacity: 0.85; }
+
+  .btn-mode {
+    padding: 6px 14px;
+    font-size: 13px;
+    background: #e8eaf6;
+    color: #333;
+  }
+  .btn-mode.active-solo { background: var(--green); color: white; }
+  .btn-mode.active-red  { background: var(--red);   color: white; }
+  .btn-mode.active-blue { background: var(--blue);  color: white; }
+  .btn-mode:hover { opacity: 0.85; }
+
+  .btn-reset {
+    background: #ff7043;
+    color: white;
+    padding: 8px 20px;
+    font-size: 14px;
+    border-radius: 8px;
+  }
+  .btn-reset:hover { background: #e64a19; }
+
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  input[type=range] {
+    width: 90px;
+    accent-color: #3949ab;
+  }
+  .slider-val {
+    font-size: 11px;
+    color: #888;
+    width: 32px;
+    text-align: right;
+  }
+
+  /* ===== SCOREBOARD ===== */
+  .scoreboard {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+    justify-content: center;
+  }
+
+  .score-box {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 10px 24px;
+    text-align: center;
+    min-width: 110px;
+    border: 3px solid transparent;
+    transition: border-color 0.3s;
+  }
+  .score-box.current-turn {
+    border-color: var(--gold);
+    box-shadow: 0 0 12px rgba(249,168,37,0.4);
+  }
+  .score-name {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .score-num {
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 1.1;
+  }
+  .score-box.solo .score-name { color: var(--green); }
+  .score-box.solo .score-num  { color: var(--green); }
+  .score-box.team-red  .score-name { color: var(--red); }
+  .score-box.team-red  .score-num  { color: var(--red); }
+  .score-box.team-blue .score-name { color: var(--blue); }
+  .score-box.team-blue .score-num  { color: var(--blue); }
+
+  .turn-label {
+    font-size: 11px;
+    color: #999;
+    margin-top: 2px;
+  }
+
+  /* ===== CARD GRID ===== */
+  .grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    max-width: 1000px;
+  }
+
+  /* ===== CARD ===== */
+  .card-wrap {
+    width: var(--card-w);
+    height: var(--card-h);
+    perspective: 800px;
+    cursor: pointer;
+  }
+
+  .card-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+    border-radius: var(--radius);
+  }
+  .card-wrap.flipped .card-inner { transform: rotateY(180deg); }
+  .card-wrap.matched .card-inner { transform: rotateY(180deg); }
+
+  .card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--radius);
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow);
+    user-select: none;
+  }
+
+  /* BACK */
+  .card-back-face {
+    background: var(--card-back);
+    color: white;
+    font-size: 28px;
+  }
+  .card-back-face::after {
+    content: '？';
+    font-size: 36px;
+    font-weight: 900;
+    opacity: 0.9;
+  }
+
+  /* FRONT */
+  .card-front-face {
+    background: var(--card-front);
+    transform: rotateY(180deg);
+    border: 2px solid #e0e0e0;
+    padding: 6px;
+    gap: 2px;
+  }
+  .card-wrap.matched .card-front-face {
+    background: var(--matched);
+    border-color: var(--green);
+  }
+  .card-wrap.matched-red .card-front-face {
+    background: #ffebee;
+    border-color: var(--red);
+  }
+  .card-wrap.matched-blue .card-front-face {
+    background: #e3f2fd;
+    border-color: var(--blue);
+  }
+
+  .card-type {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 1px 7px;
+    border-radius: 4px;
+    margin-bottom: 2px;
+  }
+  .jido  .card-type { background: #e3f2fd; color: var(--blue); }
+  .tado  .card-type { background: #fce4ec; color: var(--red); }
+
+  ruby { display: inline-flex; flex-direction: column-reverse; align-items: center; vertical-align: bottom; }
+  rt { font-size: 0.45em; color: #666; line-height: 1; margin-bottom: 1px; }
+
+  .card-word {
+    font-size: var(--font-size);
+    font-weight: 700;
+    color: #1a1a2e;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .card-ruby {
+    font-size: var(--ruby-size);
+    color: #888;
+    text-align: center;
+    margin-top: 1px;
+  }
+
+  /* toggle switch */
+  .switch-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #555;
+    font-weight: 700;
+  }
+  .switch {
+    position: relative;
+    width: 44px;
+    height: 24px;
+  }
+  .switch input { display: none; }
+  .slider-sw {
+    position: absolute;
+    inset: 0;
+    background: #ccc;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  .slider-sw::before {
+    content: '';
+    position: absolute;
+    width: 18px; height: 18px;
+    left: 3px; top: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s;
+  }
+  .switch input:checked + .slider-sw { background: #3949ab; }
+  .switch input:checked + .slider-sw::before { transform: translateX(20px); }
+
+  .card-type.hidden-label { visibility: hidden; }
+
+  /* ===== FULLSCREEN BTN ===== */
+  .btn-fs {
+    background: #5c6bc0;
+    color: white;
+    padding: 6px 14px;
+    font-size: 13px;
+    border-radius: 8px;
+  }
+  .btn-fs:hover { background: #3949ab; }
+
+  /* ===== RESULT OVERLAY ===== */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+  .overlay.show { display: flex; }
+
+  .result-box {
+    background: white;
+    border-radius: 20px;
+    padding: 40px 50px;
+    text-align: center;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+    animation: pop 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes pop {
+    from { transform: scale(0.7); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+  .result-title {
+    font-family: 'Kaisei Decol', serif;
+    font-size: 36px;
+    color: #1a237e;
+    margin-bottom: 12px;
+  }
+  .result-detail {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 24px;
+    line-height: 1.8;
+  }
+  .btn-play-again {
+    background: #3949ab;
+    color: white;
+    padding: 12px 32px;
+    font-size: 16px;
+    border-radius: 10px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 700;
+  }
+  .btn-play-again:hover { background: #1a237e; }
+
+  /* ===== MESSAGE ===== */
+  .message {
+    min-height: 28px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #3949ab;
+    text-align: center;
+    margin-bottom: 10px;
+    transition: all 0.3s;
+  }
+
+  /* ===== FLIP ANIMATION for wrong ===== */
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25%      { transform: translateX(-6px); }
+    75%      { transform: translateX(6px); }
+  }
+  .shake { animation: shake 0.3s ease; }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>自動詞・他動詞 神経衰弱ゲーム</h1>
-  <p>みんなの日本語 第30課｜ペアを見つけよう！</p>
-</header>
+<h1>🃏 自動詞・他動詞 神経衰弱</h1>
 
+<!-- CONTROLS -->
 <div class="controls">
-  <button class="btn-start" onclick="startGame()">スタート</button>
-  <button class="btn-reset" onclick="resetGame()">リセット</button>
+  <div class="ctrl-group">
+    <span class="ctrl-label">カード枚数</span>
+    <div class="btn-row" id="count-btns">
+      <button class="btn-count" onclick="setCount(4)">4枚</button>
+      <button class="btn-count active" onclick="setCount(8)">8枚</button>
+      <button class="btn-count" onclick="setCount(12)">12枚</button>
+      <button class="btn-count" onclick="setCount(16)">16枚</button>
+      <button class="btn-count" onclick="setCount(20)">20枚</button>
+      <button class="btn-count" onclick="setCount(24)">24枚</button>
+    </div>
+  </div>
+
+  <div class="ctrl-group">
+    <span class="ctrl-label">モード</span>
+    <div class="btn-row">
+      <button class="btn-mode active-solo" id="btn-solo" onclick="setMode('solo')">👤 1人</button>
+      <button class="btn-mode" id="btn-team" onclick="setMode('team')">🔴 vs 🔵 2チーム</button>
+    </div>
+  </div>
+
+  <div class="ctrl-group">
+    <span class="ctrl-label">カード幅</span>
+    <div class="slider-row">
+      <input type="range" min="90" max="240" value="140" id="sl-w" oninput="updateCard()">
+      <span class="slider-val" id="val-w">140</span>
+    </div>
+  </div>
+
+  <div class="ctrl-group">
+    <span class="ctrl-label">カード高さ</span>
+    <div class="slider-row">
+      <input type="range" min="70" max="200" value="100" id="sl-h" oninput="updateCard()">
+      <span class="slider-val" id="val-h">100</span>
+    </div>
+  </div>
+
+  <div class="ctrl-group">
+    <span class="ctrl-label">文字サイズ</span>
+    <div class="slider-row">
+      <input type="range" min="12" max="40" value="22" id="sl-f" oninput="updateCard()">
+      <span class="slider-val" id="val-f">22</span>
+    </div>
+  </div>
+
+  <div class="ctrl-group">
+    <span class="ctrl-label">ラベル表示</span>
+    <label class="switch-wrap">
+      <span>自動詞・他動詞</span>
+      <label class="switch">
+        <input type="checkbox" id="toggle-label" checked onchange="toggleLabel()">
+        <span class="slider-sw"></span>
+      </label>
+    </label>
+  </div>
+
+  <div class="ctrl-group">
+    <span class="ctrl-label">操作</span>
+    <div class="btn-row">
+      <button class="btn-reset" onclick="resetGame()">🔀 リセット</button>
+      <button class="btn-fs" onclick="toggleFS()">⛶ 全画面</button>
+    </div>
+  </div>
 </div>
 
-<div class="stats">
-  <div>めくった回数：<span id="attempts">0</span></div>
-  <div>見つけたペア：<span id="matched">0</span> / <span id="total">12</span></div>
+<!-- SCOREBOARD -->
+<div class="scoreboard" id="scoreboard"></div>
+
+<!-- MESSAGE -->
+<div class="message" id="message">カードをめくってね！</div>
+
+<!-- GRID -->
+<div class="grid" id="grid"></div>
+
+<!-- RESULT OVERLAY -->
+<div class="overlay" id="overlay">
+  <div class="result-box">
+    <div class="result-title" id="result-title">🎉 おわり！</div>
+    <div class="result-detail" id="result-detail"></div>
+    <button class="btn-play-again" onclick="resetGame(); document.getElementById('overlay').classList.remove('show')">もう一度！</button>
+  </div>
 </div>
-
-<div class="message" id="message">カードをクリックしてペアを見つけてください！</div>
-
-<div class="board" id="board"></div>
-
-<div class="pair-list">
-  <h3>自動詞・他動詞ペア一覧（第30課まで既習）</h3>
-  <table>
-    <tr><th>自動詞</th><th>読み</th><th></th><th>他動詞</th><th>読み</th><th>意味</th></tr>
-    <tr><td class="ji">開きます</td><td>あきます</td><td>↔</td><td class="ta">開けます</td><td>あけます</td><td>open</td></tr>
-    <tr><td class="ji">閉まります</td><td>しまります</td><td>↔</td><td class="ta">閉めます</td><td>しめます</td><td>close</td></tr>
-    <tr><td class="ji">つきます</td><td>つきます</td><td>↔</td><td class="ta">つけます</td><td>つけます</td><td>turn on</td></tr>
-    <tr><td class="ji">消えます</td><td>きえます</td><td>↔</td><td class="ta">消します</td><td>けします</td><td>turn off</td></tr>
-    <tr><td class="ji">止まります</td><td>とまります</td><td>↔</td><td class="ta">止めます</td><td>とめます</td><td>stop</td></tr>
-    <tr><td class="ji">入ります</td><td>はいります</td><td>↔</td><td class="ta">入れます</td><td>いれます</td><td>enter/put in</td></tr>
-    <tr><td class="ji">出ます</td><td>でます</td><td>↔</td><td class="ta">出します</td><td>だします</td><td>exit/take out</td></tr>
-    <tr><td class="ji">売れます</td><td>うれます</td><td>↔</td><td class="ta">売ります</td><td>うります</td><td>sell</td></tr>
-    <tr><td class="ji">見えます</td><td>みえます</td><td>↔</td><td class="ta">見ます</td><td>みます</td><td>see</td></tr>
-    <tr><td class="ji">聞こえます</td><td>きこえます</td><td>↔</td><td class="ta">聞きます</td><td>ききます</td><td>hear</td></tr>
-    <tr><td class="ji">片付きます</td><td>かたづきます</td><td>↔</td><td class="ta">片付けます</td><td>かたづけます</td><td>tidy up</td></tr>
-    <tr><td class="ji">掛かります</td><td>かかります</td><td>↔</td><td class="ta">掛けます</td><td>かけます</td><td>hang</td></tr>
-  </table>
-</div>
-
-<footer>みんなの日本語 授業設計サポートサイト</footer>
 
 <script>
-const PAIRS = [
-  { ji: '開きます', ji_r: 'あきます', ta: '開けます', ta_r: 'あけます', meaning: 'open' },
-  { ji: '閉まります', ji_r: 'しまります', ta: '閉めます', ta_r: 'しめます', meaning: 'close' },
-  { ji: 'つきます', ji_r: 'つきます', ta: 'つけます', ta_r: 'つけます', meaning: 'turn on' },
-  { ji: '消えます', ji_r: 'きえます', ta: '消します', ta_r: 'けします', meaning: 'turn off' },
-  { ji: '止まります', ji_r: 'とまります', ta: '止めます', ta_r: 'とめます', meaning: 'stop' },
-  { ji: '入ります', ji_r: 'はいります', ta: '入れます', ta_r: 'いれます', meaning: 'enter / put in' },
-  { ji: '出ます', ji_r: 'でます', ta: '出します', ta_r: 'だします', meaning: 'exit / take out' },
-  { ji: '売れます', ji_r: 'うれます', ta: '売ります', ta_r: 'うります', meaning: 'sell' },
-  { ji: '見えます', ji_r: 'みえます', ta: '見ます', ta_r: 'みます', meaning: 'see' },
-  { ji: '聞こえます', ji_r: 'きこえます', ta: '聞きます', ta_r: 'ききます', meaning: 'hear' },
-  { ji: '片付きます', ji_r: 'かたづきます', ta: '片付けます', ta_r: 'かたづけます', meaning: 'tidy up' },
-  { ji: '掛かります', ji_r: 'かかります', ta: '掛けます', ta_r: 'かけます', meaning: 'hang' },
+// ===== DATA =====
+const ALL_PAIRS = [
+  { jido: '<ruby>開<rt>あ</rt></ruby>きます',     tado: '<ruby>開<rt>あ</rt></ruby>けます' },
+  { jido: '<ruby>閉<rt>し</rt></ruby>まります',   tado: '<ruby>閉<rt>し</rt></ruby>めます' },
+  { jido: '<ruby>消<rt>き</rt></ruby>えます',     tado: '<ruby>消<rt>け</rt></ruby>します' },
+  { jido: '<ruby>止<rt>と</rt></ruby>まります',   tado: '<ruby>止<rt>と</rt></ruby>めます' },
+  { jido: 'つきます',                             tado: 'つけます' },
+  { jido: '<ruby>入<rt>はい</rt></ruby>ります',   tado: '<ruby>入<rt>い</rt></ruby>れます' },
+  { jido: '<ruby>出<rt>で</rt></ruby>ます',       tado: '<ruby>出<rt>だ</rt></ruby>します' },
+  { jido: '<ruby>売<rt>う</rt></ruby>れます',     tado: '<ruby>売<rt>う</rt></ruby>ります' },
+  { jido: '<ruby>見<rt>み</rt></ruby>えます',     tado: '<ruby>見<rt>み</rt></ruby>ます' },
+  { jido: '<ruby>聞<rt>き</rt></ruby>こえます',   tado: '<ruby>聞<rt>き</rt></ruby>きます' },
+  { jido: '<ruby>片付<rt>かたづ</rt></ruby>きます', tado: '<ruby>片付<rt>かたづ</rt></ruby>けます' },
+  { jido: '<ruby>掛<rt>か</rt></ruby>かります',   tado: '<ruby>掛<rt>か</rt></ruby>けます' },
 ];
 
-let cards = [];
+// ===== STATE =====
+let cardCount = 8;
+let mode = 'solo'; // 'solo' | 'team'
+let currentTeam = 'red'; // for team mode
+let scores = { solo: 0, red: 0, blue: 0 };
 let flipped = [];
-let matchedCount = 0;
-let attempts = 0;
+let matched = [];
 let locked = false;
+let cards = [];
 
+// ===== INIT =====
+function setCount(n) {
+  cardCount = n;
+  document.querySelectorAll('.btn-count').forEach(b => {
+    b.classList.toggle('active', b.textContent === n + '枚');
+  });
+  resetGame();
+}
+
+function setMode(m) {
+  mode = m;
+  currentTeam = 'red';
+  document.getElementById('btn-solo').className = 'btn-mode' + (m === 'solo' ? ' active-solo' : '');
+  document.getElementById('btn-team').className = 'btn-mode' + (m === 'team' ? ' active-red' : '');
+  resetGame();
+}
+
+function updateCard() {
+  const w = document.getElementById('sl-w').value;
+  const h = document.getElementById('sl-h').value;
+  const f = document.getElementById('sl-f').value;
+  document.getElementById('val-w').textContent = w;
+  document.getElementById('val-h').textContent = h;
+  document.getElementById('val-f').textContent = f;
+  document.documentElement.style.setProperty('--card-w', w + 'px');
+  document.documentElement.style.setProperty('--card-h', h + 'px');
+  document.documentElement.style.setProperty('--font-size', f + 'px');
+  document.documentElement.style.setProperty('--ruby-size', Math.max(9, Math.floor(f * 0.48)) + 'px');
+}
+
+function toggleFS() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+// ===== GAME =====
 function shuffle(arr) {
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -247,108 +565,192 @@ function shuffle(arr) {
   return arr;
 }
 
-function buildCards() {
+function resetGame() {
+  flipped = [];
+  matched = [];
+  locked = false;
+  scores = { solo: 0, red: 0, blue: 0 };
+  currentTeam = 'red';
+  document.getElementById('message').textContent = 'カードをめくってね！';
+  document.getElementById('overlay').classList.remove('show');
+
+  // pick pairs
+  const pairCount = cardCount / 2;
+  const chosen = shuffle([...ALL_PAIRS]).slice(0, Math.min(pairCount, ALL_PAIRS.length));
+
+  // build cards
   cards = [];
-  PAIRS.forEach((p, idx) => {
-    cards.push({ pairId: idx, type: 'jidoushi', verb: p.ji, reading: p.ji_r, label: '自動詞' });
-    cards.push({ pairId: idx, type: 'tadoushi', verb: p.ta, reading: p.ta_r, label: '他動詞' });
+  chosen.forEach((pair, i) => {
+    cards.push({ id: i * 2,     pairId: i, type: 'jido', word: pair.jido });
+    cards.push({ id: i * 2 + 1, pairId: i, type: 'tado', word: pair.tado });
   });
   shuffle(cards);
+
+  renderScoreboard();
+  renderGrid();
 }
 
-function renderBoard() {
-  const board = document.getElementById('board');
-  board.innerHTML = '';
-  cards.forEach((c, i) => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.dataset.index = i;
-    card.innerHTML = `
+function renderScoreboard() {
+  const sb = document.getElementById('scoreboard');
+  if (mode === 'solo') {
+    sb.innerHTML = `
+      <div class="score-box solo">
+        <div class="score-name">スコア</div>
+        <div class="score-num" id="score-solo">${scores.solo}</div>
+        <div class="turn-label">ペア</div>
+      </div>`;
+  } else {
+    sb.innerHTML = `
+      <div class="score-box team-red ${currentTeam === 'red' ? 'current-turn' : ''}" id="box-red">
+        <div class="score-name">🔴 赤チーム</div>
+        <div class="score-num" id="score-red">${scores.red}</div>
+        <div class="turn-label">${currentTeam === 'red' ? '← いまのターン' : ''}</div>
+      </div>
+      <div class="score-box team-blue ${currentTeam === 'blue' ? 'current-turn' : ''}" id="box-blue">
+        <div class="score-name">🔵 青チーム</div>
+        <div class="score-num" id="score-blue">${scores.blue}</div>
+        <div class="turn-label">${currentTeam === 'blue' ? '← いまのターン' : ''}</div>
+      </div>`;
+  }
+}
+
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  cards.forEach(card => {
+    const wrap = document.createElement('div');
+    wrap.className = 'card-wrap';
+    wrap.dataset.id = card.id;
+    wrap.innerHTML = `
       <div class="card-inner">
-        <div class="card-front">?</div>
-        <div class="card-back ${c.type}">
-          <div class="verb">${c.verb}</div>
-          <div class="reading">${c.reading}</div>
-          <div class="label">${c.label}</div>
+        <div class="card-face card-back-face"></div>
+        <div class="card-face card-front-face ${card.type}">
+          <div class="card-type">${card.type === 'jido' ? '自動詞' : '他動詞'}</div>
+          <div class="card-word">${card.word}</div>
+
         </div>
       </div>`;
-    card.addEventListener('click', () => flipCard(i));
-    board.appendChild(card);
+    wrap.addEventListener('click', () => flipCard(card.id));
+    grid.appendChild(wrap);
   });
 }
 
-function flipCard(index) {
+function flipCard(id) {
   if (locked) return;
-  const cardEl = document.querySelectorAll('.card')[index];
-  if (cardEl.classList.contains('flipped') || cardEl.classList.contains('matched')) return;
-  if (flipped.length >= 2) return;
+  if (flipped.includes(id)) return;
+  if (matched.includes(id)) return;
 
-  cardEl.classList.add('flipped');
-  flipped.push(index);
+  // flip
+  const wrap = document.querySelector(`.card-wrap[data-id="${id}"]`);
+  wrap.classList.add('flipped');
+  flipped.push(id);
 
   if (flipped.length === 2) {
-    attempts++;
-    document.getElementById('attempts').textContent = attempts;
     locked = true;
-    checkMatch();
+    setTimeout(() => checkMatch(), 700);
   }
 }
 
 function checkMatch() {
-  const [i1, i2] = flipped;
-  const c1 = cards[i1];
-  const c2 = cards[i2];
-  const els = document.querySelectorAll('.card');
+  const [id1, id2] = flipped;
+  const c1 = cards.find(c => c.id === id1);
+  const c2 = cards.find(c => c.id === id2);
 
   if (c1.pairId === c2.pairId && c1.type !== c2.type) {
-    // Match!
-    setTimeout(() => {
-      els[i1].classList.add('matched');
-      els[i2].classList.add('matched');
-      matchedCount++;
-      document.getElementById('matched').textContent = matchedCount;
-      flipped = [];
-      locked = false;
+    // MATCH!
+    matched.push(id1, id2);
+    const teamClass = mode === 'team' ? 'matched-' + currentTeam : 'matched';
 
-      if (matchedCount === PAIRS.length) {
-        document.getElementById('message').textContent =
-          `おめでとうございます！ ${attempts}回で全ペア見つけました！`;
-      } else {
-        const p = PAIRS[c1.pairId];
-        document.getElementById('message').textContent =
-          `○ ${p.ji}（自動詞）↔ ${p.ta}（他動詞）`;
-      }
-    }, 500);
+    [id1, id2].forEach(id => {
+      const wrap = document.querySelector(`.card-wrap[data-id="${id}"]`);
+      wrap.classList.add(teamClass);
+      wrap.style.cursor = 'default';
+    });
+
+    if (mode === 'solo') {
+      scores.solo++;
+      document.getElementById('score-solo').textContent = scores.solo;
+      document.getElementById('message').textContent = '✅ せいかい！';
+    } else {
+      scores[currentTeam]++;
+      document.getElementById('score-' + currentTeam).textContent = scores[currentTeam];
+      document.getElementById('message').textContent = (currentTeam === 'red' ? '🔴 赤' : '🔵 青') + 'チームのポイント！ もう一回！';
+      // same team gets another turn on match
+      renderScoreboard();
+    }
+
+    flipped = [];
+    locked = false;
+
+    if (matched.length === cards.length) {
+      setTimeout(showResult, 500);
+    }
   } else {
-    // No match
+    // NO MATCH
+    document.getElementById('message').textContent = '❌ ちがいます…';
+    [id1, id2].forEach(id => {
+      const wrap = document.querySelector(`.card-wrap[data-id="${id}"]`);
+      wrap.classList.add('shake');
+      setTimeout(() => { wrap.classList.remove('flipped', 'shake'); }, 600);
+    });
+
+    if (mode === 'team') {
+      currentTeam = currentTeam === 'red' ? 'blue' : 'red';
+      document.getElementById('message').textContent = '❌ ちがいます… ' + (currentTeam === 'red' ? '🔴 赤' : '🔵 青') + 'チームのターン！';
+      // update turn indicator
+      document.querySelectorAll('.score-box').forEach(b => b.classList.remove('current-turn'));
+      const nextBox = document.getElementById('box-' + currentTeam);
+      if (nextBox) nextBox.classList.add('current-turn');
+      document.querySelectorAll('.turn-label').forEach((el, i) => {
+        const teams = ['red', 'blue'];
+        el.textContent = teams[i] === currentTeam ? '← いまのターン' : '';
+      });
+      // update button highlight
+      document.getElementById('btn-team').className = 'btn-mode active-' + currentTeam;
+    }
+
+    flipped = [];
     setTimeout(() => {
-      els[i1].classList.remove('flipped');
-      els[i2].classList.remove('flipped');
-      flipped = [];
       locked = false;
-      document.getElementById('message').textContent = '× ちがいます。もう一度！';
-    }, 1000);
+      if (matched.length < cards.length) {
+        document.getElementById('message').textContent = 'カードをめくってね！';
+      }
+    }, 800);
   }
 }
 
-function startGame() {
-  matchedCount = 0;
-  attempts = 0;
-  flipped = [];
-  locked = false;
-  document.getElementById('attempts').textContent = '0';
-  document.getElementById('matched').textContent = '0';
-  document.getElementById('message').textContent = 'カードをクリックしてペアを見つけてください！';
-  buildCards();
-  renderBoard();
+function showResult() {
+  const overlay = document.getElementById('overlay');
+  const title = document.getElementById('result-title');
+  const detail = document.getElementById('result-detail');
+
+  overlay.classList.add('show');
+
+  if (mode === 'solo') {
+    title.textContent = '🎉 クリア！';
+    detail.innerHTML = `スコア：<strong>${scores.solo}</strong> ペア<br>全部そろえました！すごい！`;
+  } else {
+    const winner = scores.red > scores.blue ? '🔴 赤チーム' :
+                   scores.blue > scores.red  ? '🔵 青チーム' : null;
+    if (winner) {
+      title.textContent = `${winner} の勝ち！🏆`;
+      detail.innerHTML = `🔴 赤：<strong>${scores.red}</strong>ペア　🔵 青：<strong>${scores.blue}</strong>ペア`;
+    } else {
+      title.textContent = '🤝 引き分け！';
+      detail.innerHTML = `🔴 赤：<strong>${scores.red}</strong>ペア　🔵 青：<strong>${scores.blue}</strong>ペア<br>どちらもすごい！`;
+    }
+  }
 }
 
-function resetGame() {
-  startGame();
+function toggleLabel() {
+  const show = document.getElementById('toggle-label').checked;
+  document.querySelectorAll('.card-type').forEach(el => {
+    el.classList.toggle('hidden-label', !show);
+  });
 }
 
-// 初期表示
-startGame();
+// ===== START =====
+resetGame();
 </script>
 </body>
 </html>
