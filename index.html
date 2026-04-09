@@ -11,746 +11,468 @@
     --card-w: 140px;
     --card-h: 100px;
     --font-size: 22px;
-    --ruby-size: 11px;
     --bg: #f0f4ff;
+    --panel-bg: #1a237e;
     --red: #e53935;
     --blue: #1e88e5;
     --green: #43a047;
     --gold: #f9a825;
     --card-back: #3949ab;
-    --card-front: #ffffff;
     --matched: #c8e6c9;
     --shadow: 0 4px 16px rgba(0,0,0,0.13);
     --radius: 12px;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); min-height: 100vh; }
 
-  body {
-    font-family: 'Noto Sans JP', sans-serif;
-    background: var(--bg);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 16px;
-  }
+  /* ===== 先生レイアウト ===== */
+  .teacher-layout { display: flex; min-height: 100vh; }
 
-  /* ===== HEADER ===== */
-  h1 {
-    font-family: 'Kaisei Decol', serif;
-    font-size: 28px;
-    color: #1a237e;
-    margin-bottom: 10px;
-    text-align: center;
-    letter-spacing: 2px;
-  }
-
-  /* ===== CONTROLS ===== */
-  .controls {
-    background: white;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 14px 20px;
-    margin-bottom: 14px;
-    width: 100%;
-    max-width: 900px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 14px;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .ctrl-group {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    align-items: center;
-  }
-
-  .ctrl-label {
-    font-size: 11px;
-    color: #666;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-
-  .btn-row {
-    display: flex;
-    gap: 6px;
-  }
-
-  button {
-    font-family: 'Noto Sans JP', sans-serif;
-    border: none;
-    cursor: pointer;
-    border-radius: 8px;
-    font-weight: 700;
-    transition: all 0.15s;
-  }
-
-  .btn-count {
-    background: #e8eaf6;
-    color: #3949ab;
-    padding: 6px 12px;
-    font-size: 14px;
-  }
-  .btn-count.active {
-    background: #3949ab;
+  .left-panel {
+    width: 250px; min-width: 250px;
+    background: var(--panel-bg);
     color: white;
+    display: flex; flex-direction: column;
+    padding: 14px 12px; gap: 12px;
+    overflow-y: auto;
   }
-  .btn-count:hover { opacity: 0.85; }
 
-  .btn-mode {
-    padding: 6px 14px;
-    font-size: 13px;
-    background: #e8eaf6;
-    color: #333;
+  .panel-title {
+    font-family: 'Kaisei Decol', serif;
+    font-size: 15px; color: #c5cae9;
+    text-align: center; letter-spacing: 1px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #3949ab;
   }
+
+  .ctrl-group { display: flex; flex-direction: column; gap: 5px; }
+  .ctrl-label { font-size: 10px; color: #9fa8da; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 4px; }
+
+  button { font-family: 'Noto Sans JP', sans-serif; border: none; cursor: pointer; border-radius: 8px; font-weight: 700; transition: all 0.15s; }
+
+  .btn-count { background: #3949ab; color: #c5cae9; padding: 5px 9px; font-size: 12px; }
+  .btn-count.active { background: #7986cb; color: white; }
+
+  .btn-mode { padding: 6px 8px; font-size: 12px; background: #3949ab; color: #c5cae9; flex: 1; }
   .btn-mode.active-solo { background: var(--green); color: white; }
   .btn-mode.active-red  { background: var(--red);   color: white; }
   .btn-mode.active-blue { background: var(--blue);  color: white; }
-  .btn-mode:hover { opacity: 0.85; }
 
-  .btn-reset {
-    background: #ff7043;
-    color: white;
-    padding: 8px 20px;
-    font-size: 14px;
-    border-radius: 8px;
-  }
+  .btn-wide { width: 100%; padding: 8px; font-size: 13px; border-radius: 8px; }
+  .btn-reset   { background: #ff7043; color: white; }
   .btn-reset:hover { background: #e64a19; }
+  .btn-fs      { background: #5c6bc0; color: white; }
+  .btn-student { background: var(--gold); color: #1a237e; font-weight: 900; }
+  .btn-student:hover { background: #f57f17; color: white; }
 
-  .slider-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  input[type=range] {
-    width: 90px;
-    accent-color: #3949ab;
-  }
-  .slider-val {
-    font-size: 11px;
-    color: #888;
-    width: 32px;
-    text-align: right;
-  }
+  .slider-row { display: flex; align-items: center; gap: 6px; }
+  input[type=range] { flex: 1; accent-color: #7986cb; }
+  .slider-val { font-size: 11px; color: #9fa8da; width: 28px; text-align: right; }
 
-  /* ===== SCOREBOARD ===== */
-  .scoreboard {
-    display: flex;
-    gap: 16px;
-    margin-bottom: 12px;
-    justify-content: center;
-  }
+  .switch-wrap { display: flex; align-items: center; justify-content: space-between; }
+  .switch-wrap > span { font-size: 12px; color: #c5cae9; }
+  .switch { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+  .switch input { display: none; }
+  .slider-sw { position: absolute; inset: 0; background: #3949ab; border-radius: 22px; cursor: pointer; transition: .3s; }
+  .slider-sw::before { content: ''; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; background: white; border-radius: 50%; transition: .3s; }
+  .switch input:checked + .slider-sw { background: #7986cb; }
+  .switch input:checked + .slider-sw::before { transform: translateX(18px); }
 
-  .score-box {
-    background: white;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 10px 24px;
-    text-align: center;
-    min-width: 110px;
-    border: 3px solid transparent;
-    transition: border-color 0.3s;
-  }
-  .score-box.current-turn {
-    border-color: var(--gold);
-    box-shadow: 0 0 12px rgba(249,168,37,0.4);
-  }
-  .score-name {
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 1px;
-  }
-  .score-num {
-    font-size: 32px;
-    font-weight: 900;
-    line-height: 1.1;
-  }
-  .score-box.solo .score-name { color: var(--green); }
-  .score-box.solo .score-num  { color: var(--green); }
-  .score-box.team-red  .score-name { color: var(--red); }
-  .score-box.team-red  .score-num  { color: var(--red); }
-  .score-box.team-blue .score-name { color: var(--blue); }
-  .score-box.team-blue .score-num  { color: var(--blue); }
+  .divider { border: none; border-top: 1px solid #3949ab; }
 
-  .turn-label {
-    font-size: 11px;
-    color: #999;
-    margin-top: 2px;
-  }
+  /* 右パネル */
+  .right-panel { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 16px; overflow-y: auto; }
 
-  /* ===== CARD GRID ===== */
-  .grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    max-width: 1000px;
-  }
+  /* ===== 生徒レイアウト ===== */
+  .student-layout { display: flex; flex-direction: column; align-items: center; padding: 16px; min-height: 100vh; }
+  .student-badge { background: #1a237e; color: white; font-size: 11px; font-weight: 700; padding: 3px 14px; border-radius: 20px; margin-bottom: 10px; letter-spacing: 1px; }
 
-  /* ===== CARD ===== */
-  .card-wrap {
-    width: var(--card-w);
-    height: var(--card-h);
-    perspective: 800px;
-    cursor: pointer;
-  }
+  /* ===== 共通部品 ===== */
+  h1 { font-family: 'Kaisei Decol', serif; font-size: 22px; color: #1a237e; margin-bottom: 10px; text-align: center; letter-spacing: 2px; }
 
-  .card-inner {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
-    border-radius: var(--radius);
-  }
-  .card-wrap.flipped .card-inner { transform: rotateY(180deg); }
-  .card-wrap.matched .card-inner { transform: rotateY(180deg); }
+  .scoreboard { display: flex; gap: 14px; margin-bottom: 8px; justify-content: center; }
+  .score-box { background: white; border-radius: var(--radius); box-shadow: var(--shadow); padding: 8px 18px; text-align: center; min-width: 95px; border: 3px solid transparent; transition: border-color .3s; }
+  .score-box.current-turn { border-color: var(--gold); box-shadow: 0 0 10px rgba(249,168,37,.4); }
+  .score-name { font-size: 12px; font-weight: 700; }
+  .score-num  { font-size: 28px; font-weight: 900; line-height: 1.1; }
+  .turn-label { font-size: 10px; color: #999; }
+  .score-box.solo      .score-name, .score-box.solo      .score-num { color: var(--green); }
+  .score-box.team-red  .score-name, .score-box.team-red  .score-num { color: var(--red); }
+  .score-box.team-blue .score-name, .score-box.team-blue .score-num { color: var(--blue); }
 
-  .card-face {
+  .message { min-height: 24px; font-size: 14px; font-weight: 700; color: #3949ab; text-align: center; margin-bottom: 10px; }
+
+  .grid { display: grid; gap: 10px; justify-content: center; }
+
+  /* カード番号 */
+  .card-num {
     position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: var(--radius);
-    backface-visibility: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    box-shadow: var(--shadow);
-    user-select: none;
-  }
-
-  /* BACK */
-  .card-back-face {
-    background: var(--card-back);
-    color: white;
-    font-size: 28px;
-  }
-  .card-back-face::after {
-    content: '？';
-    font-size: 36px;
+    top: 4px; left: 6px;
+    font-size: 13px;
     font-weight: 900;
-    opacity: 0.9;
+    color: rgba(255,255,255,0.7);
+    line-height: 1;
+    pointer-events: none;
   }
 
-  /* FRONT */
-  .card-front-face {
-    background: var(--card-front);
-    transform: rotateY(180deg);
-    border: 2px solid #e0e0e0;
-    padding: 6px;
-    gap: 2px;
-  }
-  .card-wrap.matched .card-front-face {
-    background: var(--matched);
-    border-color: var(--green);
-  }
-  .card-wrap.matched-red .card-front-face {
-    background: #ffebee;
-    border-color: var(--red);
-  }
-  .card-wrap.matched-blue .card-front-face {
-    background: #e3f2fd;
-    border-color: var(--blue);
-  }
+  /* ===== カード ===== */
+  .card-wrap { width: var(--card-w); height: var(--card-h); perspective: 800px; cursor: pointer; }
+  .card-wrap.readonly { cursor: default; }
 
-  .card-type {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    padding: 1px 7px;
-    border-radius: 4px;
-    margin-bottom: 2px;
-  }
-  .jido  .card-type { background: #e3f2fd; color: var(--blue); }
-  .tado  .card-type { background: #fce4ec; color: var(--red); }
+  .card-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform .4s cubic-bezier(.4,0,.2,1); border-radius: var(--radius); }
+  .card-wrap.flipped .card-inner,
+  .card-wrap.matched  .card-inner,
+  .card-wrap.matched-red  .card-inner,
+  .card-wrap.matched-blue .card-inner { transform: rotateY(180deg); }
+
+  .card-face { position: absolute; width: 100%; height: 100%; border-radius: var(--radius); backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: var(--shadow); user-select: none; }
+
+  .card-back-face { background: var(--card-back); }
+  .card-back-face::after { content: '？'; font-size: 36px; font-weight: 900; color: white; opacity: .9; }
+
+  .card-front-face { background: white; transform: rotateY(180deg); border: 2px solid #e0e0e0; padding: 6px; gap: 2px; }
+  .card-wrap.matched      .card-front-face { background: var(--matched); border-color: var(--green); }
+  .card-wrap.matched-red  .card-front-face { background: #ffebee; border-color: var(--red); }
+  .card-wrap.matched-blue .card-front-face { background: #e3f2fd; border-color: var(--blue); }
+
+  .card-type { font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 4px; margin-bottom: 2px; }
+  .card-type.hidden-label { visibility: hidden; }
+  .jido .card-type { background: #e3f2fd; color: var(--blue); }
+  .tado .card-type { background: #fce4ec; color: var(--red); }
+
+  .card-word { font-size: var(--font-size); font-weight: 700; color: #1a1a2e; text-align: center; line-height: 1.3; }
 
   ruby { display: inline-flex; flex-direction: column-reverse; align-items: center; vertical-align: bottom; }
-  rt { font-size: 0.45em; color: #666; line-height: 1; margin-bottom: 1px; }
+  rt   { font-size: .45em; color: #666; line-height: 1; margin-bottom: 1px; }
 
-  .card-word {
-    font-size: var(--font-size);
-    font-weight: 700;
-    color: #1a1a2e;
-    text-align: center;
-    line-height: 1.2;
-  }
-
-  .card-ruby {
-    font-size: var(--ruby-size);
-    color: #888;
-    text-align: center;
-    margin-top: 1px;
-  }
-
-  /* toggle switch */
-  .switch-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    color: #555;
-    font-weight: 700;
-  }
-  .switch {
-    position: relative;
-    width: 44px;
-    height: 24px;
-  }
-  .switch input { display: none; }
-  .slider-sw {
-    position: absolute;
-    inset: 0;
-    background: #ccc;
-    border-radius: 24px;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  .slider-sw::before {
-    content: '';
-    position: absolute;
-    width: 18px; height: 18px;
-    left: 3px; top: 3px;
-    background: white;
-    border-radius: 50%;
-    transition: 0.3s;
-  }
-  .switch input:checked + .slider-sw { background: #3949ab; }
-  .switch input:checked + .slider-sw::before { transform: translateX(20px); }
-
-  .card-type.hidden-label { visibility: hidden; }
-
-  /* ===== FULLSCREEN BTN ===== */
-  .btn-fs {
-    background: #5c6bc0;
-    color: white;
-    padding: 6px 14px;
-    font-size: 13px;
-    border-radius: 8px;
-  }
-  .btn-fs:hover { background: #3949ab; }
-
-  /* ===== RESULT OVERLAY ===== */
-  .overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.55);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-  }
+  /* ===== オーバーレイ ===== */
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 100; align-items: center; justify-content: center; }
   .overlay.show { display: flex; }
+  .result-box { background: white; border-radius: 20px; padding: 36px 44px; text-align: center; box-shadow: 0 8px 40px rgba(0,0,0,.3); animation: pop .4s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes pop { from{transform:scale(.7);opacity:0} to{transform:scale(1);opacity:1} }
+  .result-title  { font-family: 'Kaisei Decol', serif; font-size: 30px; color: #1a237e; margin-bottom: 8px; }
+  .result-detail { font-size: 15px; color: #555; margin-bottom: 18px; line-height: 1.8; }
+  .btn-play-again { background: #3949ab; color: white; padding: 10px 26px; font-size: 14px; border-radius: 10px; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; }
 
-  .result-box {
-    background: white;
-    border-radius: 20px;
-    padding: 40px 50px;
-    text-align: center;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
-    animation: pop 0.4s cubic-bezier(0.34,1.56,0.64,1);
-  }
-  @keyframes pop {
-    from { transform: scale(0.7); opacity: 0; }
-    to   { transform: scale(1);   opacity: 1; }
-  }
-  .result-title {
-    font-family: 'Kaisei Decol', serif;
-    font-size: 36px;
-    color: #1a237e;
-    margin-bottom: 12px;
-  }
-  .result-detail {
-    font-size: 18px;
-    color: #555;
-    margin-bottom: 24px;
-    line-height: 1.8;
-  }
-  .btn-play-again {
-    background: #3949ab;
-    color: white;
-    padding: 12px 32px;
-    font-size: 16px;
-    border-radius: 10px;
-    font-family: 'Noto Sans JP', sans-serif;
-    font-weight: 700;
-  }
-  .btn-play-again:hover { background: #1a237e; }
-
-  /* ===== MESSAGE ===== */
-  .message {
-    min-height: 28px;
-    font-size: 15px;
-    font-weight: 700;
-    color: #3949ab;
-    text-align: center;
-    margin-bottom: 10px;
-    transition: all 0.3s;
-  }
-
-  /* ===== FLIP ANIMATION for wrong ===== */
-  @keyframes shake {
-    0%,100% { transform: translateX(0); }
-    25%      { transform: translateX(-6px); }
-    75%      { transform: translateX(6px); }
-  }
-  .shake { animation: shake 0.3s ease; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  .shake { animation: shake .3s ease; }
 </style>
 </head>
 <body>
 
-<h1>🃏 自動詞・他動詞 神経衰弱</h1>
+<!-- 先生画面 -->
+<div class="teacher-layout" id="teacher-layout" style="display:none">
+  <div class="left-panel">
+    <div class="panel-title">🃏 自動詞・他動詞<br>神経衰弱</div>
 
-<!-- CONTROLS -->
-<div class="controls">
-  <div class="ctrl-group">
-    <span class="ctrl-label">カード枚数</span>
-    <div class="btn-row" id="count-btns">
-      <button class="btn-count" onclick="setCount(4)">4枚</button>
-      <button class="btn-count active" onclick="setCount(8)">8枚</button>
-      <button class="btn-count" onclick="setCount(12)">12枚</button>
-      <button class="btn-count" onclick="setCount(16)">16枚</button>
-      <button class="btn-count" onclick="setCount(20)">20枚</button>
-      <button class="btn-count" onclick="setCount(24)">24枚</button>
+    <div class="ctrl-group">
+      <span class="ctrl-label">カード枚数</span>
+      <div class="btn-row" id="count-btns">
+        <button class="btn-count" onclick="setCount(4)">4枚</button>
+        <button class="btn-count active" onclick="setCount(8)">8枚</button>
+        <button class="btn-count" onclick="setCount(12)">12枚</button>
+        <button class="btn-count" onclick="setCount(16)">16枚</button>
+        <button class="btn-count" onclick="setCount(20)">20枚</button>
+        <button class="btn-count" onclick="setCount(24)">24枚</button>
+      </div>
     </div>
-  </div>
 
-  <div class="ctrl-group">
-    <span class="ctrl-label">モード</span>
-    <div class="btn-row">
-      <button class="btn-mode active-solo" id="btn-solo" onclick="setMode('solo')">👤 1人</button>
-      <button class="btn-mode" id="btn-team" onclick="setMode('team')">🔴 vs 🔵 2チーム</button>
+    <div class="ctrl-group">
+      <span class="ctrl-label">モード</span>
+      <div class="btn-row">
+        <button class="btn-mode active-solo" id="btn-solo" onclick="setMode('solo')">👤 1人</button>
+        <button class="btn-mode" id="btn-team" onclick="setMode('team')">🔴 vs 🔵</button>
+      </div>
     </div>
-  </div>
 
-  <div class="ctrl-group">
-    <span class="ctrl-label">カード幅</span>
-    <div class="slider-row">
-      <input type="range" min="90" max="240" value="140" id="sl-w" oninput="updateCard()">
-      <span class="slider-val" id="val-w">140</span>
+    <hr class="divider">
+
+    <div class="ctrl-group">
+      <span class="ctrl-label">カード幅</span>
+      <div class="slider-row">
+        <input type="range" min="90" max="240" value="140" id="sl-w" oninput="updateCard()">
+        <span class="slider-val" id="val-w">140</span>
+      </div>
     </div>
-  </div>
-
-  <div class="ctrl-group">
-    <span class="ctrl-label">カード高さ</span>
-    <div class="slider-row">
-      <input type="range" min="70" max="200" value="100" id="sl-h" oninput="updateCard()">
-      <span class="slider-val" id="val-h">100</span>
+    <div class="ctrl-group">
+      <span class="ctrl-label">カード高さ</span>
+      <div class="slider-row">
+        <input type="range" min="70" max="200" value="100" id="sl-h" oninput="updateCard()">
+        <span class="slider-val" id="val-h">100</span>
+      </div>
     </div>
-  </div>
-
-  <div class="ctrl-group">
-    <span class="ctrl-label">文字サイズ</span>
-    <div class="slider-row">
-      <input type="range" min="12" max="40" value="22" id="sl-f" oninput="updateCard()">
-      <span class="slider-val" id="val-f">22</span>
+    <div class="ctrl-group">
+      <span class="ctrl-label">文字サイズ</span>
+      <div class="slider-row">
+        <input type="range" min="12" max="40" value="22" id="sl-f" oninput="updateCard()">
+        <span class="slider-val" id="val-f">22</span>
+      </div>
     </div>
-  </div>
 
-  <div class="ctrl-group">
-    <span class="ctrl-label">ラベル表示</span>
-    <label class="switch-wrap">
-      <span>自動詞・他動詞</span>
-      <label class="switch">
-        <input type="checkbox" id="toggle-label" checked onchange="toggleLabel()">
-        <span class="slider-sw"></span>
+    <hr class="divider">
+
+    <div class="ctrl-group">
+      <span class="ctrl-label">ラベル表示</span>
+      <label class="switch-wrap">
+        <span>自動詞・他動詞</span>
+        <label class="switch">
+          <input type="checkbox" id="toggle-label" checked onchange="toggleLabel()">
+          <span class="slider-sw"></span>
+        </label>
       </label>
-    </label>
+    </div>
+
+    <hr class="divider">
+
+    <button class="btn-wide btn-reset" onclick="resetGame()">🔀 リセット</button>
+    <button class="btn-wide btn-fs" onclick="toggleFS()">⛶ 全画面</button>
+    <button class="btn-wide btn-student" onclick="openStudentWindow()">📺 生徒画面を開く</button>
   </div>
 
-  <div class="ctrl-group">
-    <span class="ctrl-label">操作</span>
-    <div class="btn-row">
-      <button class="btn-reset" onclick="resetGame()">🔀 リセット</button>
-      <button class="btn-fs" onclick="toggleFS()">⛶ 全画面</button>
-    </div>
+  <div class="right-panel">
+    <h1>🃏 自動詞・他動詞 神経衰弱</h1>
+    <div class="scoreboard" id="scoreboard-t"></div>
+    <div class="message"    id="message-t">カードをめくってね！</div>
+    <div class="grid"       id="grid-t"></div>
   </div>
 </div>
 
-<!-- SCOREBOARD -->
-<div class="scoreboard" id="scoreboard"></div>
+<!-- 生徒画面 -->
+<div class="student-layout" id="student-layout" style="display:none">
+  <div class="student-badge">📺 生徒画面</div>
+  <div class="scoreboard" id="scoreboard-s"></div>
+  <div class="message"    id="message-s">カードをめくってね！</div>
+  <div class="grid"       id="grid-s"></div>
+</div>
 
-<!-- MESSAGE -->
-<div class="message" id="message">カードをめくってね！</div>
-
-<!-- GRID -->
-<div class="grid" id="grid"></div>
-
-<!-- RESULT OVERLAY -->
+<!-- 結果オーバーレイ -->
 <div class="overlay" id="overlay">
   <div class="result-box">
-    <div class="result-title" id="result-title">🎉 おわり！</div>
+    <div class="result-title"  id="result-title">🎉 おわり！</div>
     <div class="result-detail" id="result-detail"></div>
-    <button class="btn-play-again" onclick="resetGame(); document.getElementById('overlay').classList.remove('show')">もう一度！</button>
+    <button class="btn-play-again" onclick="resetGame();document.getElementById('overlay').classList.remove('show')">もう一度！</button>
   </div>
 </div>
 
 <script>
-// ===== DATA =====
+const isStudent = new URLSearchParams(location.search).has('student');
+const ch = new BroadcastChannel('jidoshi_game');
+
 const ALL_PAIRS = [
-  { jido: '<ruby>開<rt>あ</rt></ruby>きます',     tado: '<ruby>開<rt>あ</rt></ruby>けます' },
-  { jido: '<ruby>閉<rt>し</rt></ruby>まります',   tado: '<ruby>閉<rt>し</rt></ruby>めます' },
-  { jido: '<ruby>消<rt>き</rt></ruby>えます',     tado: '<ruby>消<rt>け</rt></ruby>します' },
-  { jido: '<ruby>止<rt>と</rt></ruby>まります',   tado: '<ruby>止<rt>と</rt></ruby>めます' },
-  { jido: 'つきます',                             tado: 'つけます' },
-  { jido: '<ruby>入<rt>はい</rt></ruby>ります',   tado: '<ruby>入<rt>い</rt></ruby>れます' },
-  { jido: '<ruby>出<rt>で</rt></ruby>ます',       tado: '<ruby>出<rt>だ</rt></ruby>します' },
-  { jido: '<ruby>売<rt>う</rt></ruby>れます',     tado: '<ruby>売<rt>う</rt></ruby>ります' },
-  { jido: '<ruby>見<rt>み</rt></ruby>えます',     tado: '<ruby>見<rt>み</rt></ruby>ます' },
-  { jido: '<ruby>聞<rt>き</rt></ruby>こえます',   tado: '<ruby>聞<rt>き</rt></ruby>きます' },
-  { jido: '<ruby>片付<rt>かたづ</rt></ruby>きます', tado: '<ruby>片付<rt>かたづ</rt></ruby>けます' },
-  { jido: '<ruby>掛<rt>か</rt></ruby>かります',   tado: '<ruby>掛<rt>か</rt></ruby>けます' },
+  { jido:'<ruby>開<rt>あ</rt></ruby>きます',       tado:'<ruby>開<rt>あ</rt></ruby>けます' },
+  { jido:'<ruby>閉<rt>し</rt></ruby>まります',     tado:'<ruby>閉<rt>し</rt></ruby>めます' },
+  { jido:'<ruby>消<rt>き</rt></ruby>えます',       tado:'<ruby>消<rt>け</rt></ruby>します' },
+  { jido:'<ruby>止<rt>と</rt></ruby>まります',     tado:'<ruby>止<rt>と</rt></ruby>めます' },
+  { jido:'つきます',                               tado:'つけます' },
+  { jido:'<ruby>入<rt>はい</rt></ruby>ります',     tado:'<ruby>入<rt>い</rt></ruby>れます' },
+  { jido:'<ruby>出<rt>で</rt></ruby>ます',         tado:'<ruby>出<rt>だ</rt></ruby>します' },
+  { jido:'<ruby>売<rt>う</rt></ruby>れます',       tado:'<ruby>売<rt>う</rt></ruby>ります' },
+  { jido:'<ruby>見<rt>み</rt></ruby>えます',       tado:'<ruby>見<rt>み</rt></ruby>ます' },
+  { jido:'<ruby>聞<rt>き</rt></ruby>こえます',     tado:'<ruby>聞<rt>き</rt></ruby>きます' },
+  { jido:'<ruby>片付<rt>かたづ</rt></ruby>きます', tado:'<ruby>片付<rt>かたづ</rt></ruby>けます' },
+  { jido:'<ruby>掛<rt>か</rt></ruby>かります',     tado:'<ruby>掛<rt>か</rt></ruby>けます' },
 ];
 
-// ===== STATE =====
-let cardCount = 8;
-let mode = 'solo'; // 'solo' | 'team'
-let currentTeam = 'red'; // for team mode
-let scores = { solo: 0, red: 0, blue: 0 };
-let flipped = [];
-let matched = [];
-let locked = false;
-let cards = [];
+let cardCount=8, mode='solo', currentTeam='red';
+let scores={solo:0,red:0,blue:0};
+let flipped=[], matched=[], locked=false, cards=[];
+let showLabel=true;
 
-// ===== INIT =====
+// ===== 同期 =====
+ch.onmessage = e => {
+  if (isStudent) {
+    if (e.data === 'request') return;
+    applyState(e.data);
+  } else {
+    if (e.data === 'request') broadcastState();
+  }
+};
+
+function broadcastState() {
+  ch.postMessage({ cards, scores, flipped, matched, mode, currentTeam, showLabel,
+    msg: document.getElementById('message-t')?.textContent || '' });
+}
+
+function applyState(s) {
+  cards=s.cards; scores=s.scores; flipped=s.flipped; matched=s.matched;
+  mode=s.mode; currentTeam=s.currentTeam; showLabel=s.showLabel;
+  renderScoreboard('s'); renderGrid('s');
+  const el=document.getElementById('message-s'); if(el) el.textContent=s.msg;
+}
+
+// ===== 初期化 =====
+document.addEventListener('DOMContentLoaded', () => {
+  if (isStudent) {
+    document.getElementById('student-layout').style.display = 'flex';
+    ch.postMessage('request');
+  } else {
+    document.getElementById('teacher-layout').style.display = 'flex';
+    resetGame();
+  }
+});
+
+function openStudentWindow() {
+  const url = location.href.split('?')[0] + '?student';
+  window.open(url, '_blank');
+  setTimeout(broadcastState, 800);
+}
+
+// ===== コントロール =====
 function setCount(n) {
   cardCount = n;
-  document.querySelectorAll('.btn-count').forEach(b => {
-    b.classList.toggle('active', b.textContent === n + '枚');
-  });
+  document.querySelectorAll('.btn-count').forEach(b => b.classList.toggle('active', b.textContent === n+'枚'));
   resetGame();
 }
-
 function setMode(m) {
-  mode = m;
-  currentTeam = 'red';
-  document.getElementById('btn-solo').className = 'btn-mode' + (m === 'solo' ? ' active-solo' : '');
-  document.getElementById('btn-team').className = 'btn-mode' + (m === 'team' ? ' active-red' : '');
+  mode=m; currentTeam='red';
+  document.getElementById('btn-solo').className = 'btn-mode'+(m==='solo'?' active-solo':'');
+  document.getElementById('btn-team').className = 'btn-mode'+(m==='team'?' active-red':'');
   resetGame();
 }
-
 function updateCard() {
-  const w = document.getElementById('sl-w').value;
-  const h = document.getElementById('sl-h').value;
-  const f = document.getElementById('sl-f').value;
-  document.getElementById('val-w').textContent = w;
-  document.getElementById('val-h').textContent = h;
-  document.getElementById('val-f').textContent = f;
-  document.documentElement.style.setProperty('--card-w', w + 'px');
-  document.documentElement.style.setProperty('--card-h', h + 'px');
-  document.documentElement.style.setProperty('--font-size', f + 'px');
-  document.documentElement.style.setProperty('--ruby-size', Math.max(9, Math.floor(f * 0.48)) + 'px');
+  const w=document.getElementById('sl-w').value, h=document.getElementById('sl-h').value, f=document.getElementById('sl-f').value;
+  document.getElementById('val-w').textContent=w;
+  document.getElementById('val-h').textContent=h;
+  document.getElementById('val-f').textContent=f;
+  document.documentElement.style.setProperty('--card-w',w+'px');
+  document.documentElement.style.setProperty('--card-h',h+'px');
+  document.documentElement.style.setProperty('--font-size',f+'px');
+  broadcastState();
 }
-
 function toggleFS() {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen();
-  } else {
-    document.exitFullscreen();
-  }
+  if(!document.fullscreenElement) document.documentElement.requestFullscreen();
+  else document.exitFullscreen();
+}
+function toggleLabel() {
+  showLabel=document.getElementById('toggle-label').checked;
+  document.querySelectorAll('.card-type').forEach(el=>el.classList.toggle('hidden-label',!showLabel));
+  broadcastState();
 }
 
-// ===== GAME =====
-function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
+// ===== ゲーム =====
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 
 function resetGame() {
-  flipped = [];
-  matched = [];
-  locked = false;
-  scores = { solo: 0, red: 0, blue: 0 };
-  currentTeam = 'red';
-  document.getElementById('message').textContent = 'カードをめくってね！';
+  flipped=[];matched=[];locked=false;scores={solo:0,red:0,blue:0};currentTeam='red';
+  setMsg('カードをめくってね！');
   document.getElementById('overlay').classList.remove('show');
-
-  // pick pairs
-  const pairCount = cardCount / 2;
-  const chosen = shuffle([...ALL_PAIRS]).slice(0, Math.min(pairCount, ALL_PAIRS.length));
-
-  // build cards
-  cards = [];
-  chosen.forEach((pair, i) => {
-    cards.push({ id: i * 2,     pairId: i, type: 'jido', word: pair.jido });
-    cards.push({ id: i * 2 + 1, pairId: i, type: 'tado', word: pair.tado });
+  const chosen=shuffle([...ALL_PAIRS]).slice(0,Math.min(cardCount/2,ALL_PAIRS.length));
+  cards=[];
+  chosen.forEach((p,i)=>{
+    cards.push({id:i*2,  pairId:i,type:'jido',word:p.jido,mc:''});
+    cards.push({id:i*2+1,pairId:i,type:'tado',word:p.tado,mc:''});
   });
   shuffle(cards);
-
-  renderScoreboard();
-  renderGrid();
+  renderScoreboard('t'); renderGrid('t');
+  broadcastState();
 }
 
-function renderScoreboard() {
-  const sb = document.getElementById('scoreboard');
-  if (mode === 'solo') {
-    sb.innerHTML = `
-      <div class="score-box solo">
-        <div class="score-name">スコア</div>
-        <div class="score-num" id="score-solo">${scores.solo}</div>
-        <div class="turn-label">ペア</div>
-      </div>`;
+function setMsg(txt){ const el=document.getElementById('message-t'); if(el) el.textContent=txt; }
+
+function renderScoreboard(side){
+  const sb=document.getElementById('scoreboard-'+side); if(!sb)return;
+  if(mode==='solo'){
+    sb.innerHTML=`<div class="score-box solo"><div class="score-name">スコア</div><div class="score-num" id="score-solo-${side}">${scores.solo}</div><div class="turn-label">ペア</div></div>`;
   } else {
-    sb.innerHTML = `
-      <div class="score-box team-red ${currentTeam === 'red' ? 'current-turn' : ''}" id="box-red">
+    sb.innerHTML=`
+      <div class="score-box team-red ${currentTeam==='red'?'current-turn':''}" id="box-red-${side}">
         <div class="score-name">🔴 赤チーム</div>
-        <div class="score-num" id="score-red">${scores.red}</div>
-        <div class="turn-label">${currentTeam === 'red' ? '← いまのターン' : ''}</div>
+        <div class="score-num">${scores.red}</div>
+        <div class="turn-label">${currentTeam==='red'?'← ターン':''}</div>
       </div>
-      <div class="score-box team-blue ${currentTeam === 'blue' ? 'current-turn' : ''}" id="box-blue">
+      <div class="score-box team-blue ${currentTeam==='blue'?'current-turn':''}" id="box-blue-${side}">
         <div class="score-name">🔵 青チーム</div>
-        <div class="score-num" id="score-blue">${scores.blue}</div>
-        <div class="turn-label">${currentTeam === 'blue' ? '← いまのターン' : ''}</div>
+        <div class="score-num">${scores.blue}</div>
+        <div class="turn-label">${currentTeam==='blue'?'← ターン':''}</div>
       </div>`;
   }
 }
 
-function renderGrid() {
-  const grid = document.getElementById('grid');
-  grid.innerHTML = '';
-  cards.forEach(card => {
-    const wrap = document.createElement('div');
-    wrap.className = 'card-wrap';
-    wrap.dataset.id = card.id;
-    wrap.innerHTML = `
-      <div class="card-inner">
-        <div class="card-face card-back-face"></div>
-        <div class="card-face card-front-face ${card.type}">
-          <div class="card-type">${card.type === 'jido' ? '自動詞' : '他動詞'}</div>
-          <div class="card-word">${card.word}</div>
+function getBestCols(n) {
+  const colMap = {4:2, 8:4, 12:4, 16:4, 20:5, 24:6};
+  return colMap[n] || Math.ceil(Math.sqrt(n));
+}
 
-        </div>
-      </div>`;
-    wrap.addEventListener('click', () => flipCard(card.id));
+function renderGrid(side){
+  const grid=document.getElementById('grid-'+side); if(!grid)return;
+  const cols = getBestCols(cards.length);
+  grid.style.gridTemplateColumns = `repeat(${cols}, var(--card-w))`;
+  const ro=(side==='s');
+  grid.innerHTML='';
+  cards.forEach((card, idx)=>{
+    const wrap=document.createElement('div');
+    let cls='card-wrap';
+    if(flipped.includes(card.id)||matched.includes(card.id)) cls+=' flipped';
+    if(matched.includes(card.id)) cls+=' '+(card.mc||'matched');
+    if(ro) cls+=' readonly';
+    wrap.className=cls; wrap.dataset.id=card.id;
+    wrap.innerHTML=`<div class="card-inner">
+      <div class="card-face card-back-face">
+        <span class="card-num">${idx+1}</span>
+      </div>
+      <div class="card-face card-front-face ${card.type}">
+        <div class="card-type${showLabel?'':' hidden-label'}">${card.type==='jido'?'自動詞':'他動詞'}</div>
+        <div class="card-word">${card.word}</div>
+      </div></div>`;
+    if(!ro) wrap.addEventListener('click',()=>flipCard(card.id));
     grid.appendChild(wrap);
   });
 }
 
-function flipCard(id) {
-  if (locked) return;
-  if (flipped.includes(id)) return;
-  if (matched.includes(id)) return;
-
-  // flip
-  const wrap = document.querySelector(`.card-wrap[data-id="${id}"]`);
-  wrap.classList.add('flipped');
+function flipCard(id){
+  if(locked||flipped.includes(id)||matched.includes(id))return;
+  document.querySelector(`#grid-t .card-wrap[data-id="${id}"]`)?.classList.add('flipped');
   flipped.push(id);
-
-  if (flipped.length === 2) {
-    locked = true;
-    setTimeout(() => checkMatch(), 700);
-  }
+  broadcastState();
+  if(flipped.length===2){locked=true;setTimeout(checkMatch,700);}
 }
 
-function checkMatch() {
-  const [id1, id2] = flipped;
-  const c1 = cards.find(c => c.id === id1);
-  const c2 = cards.find(c => c.id === id2);
-
-  if (c1.pairId === c2.pairId && c1.type !== c2.type) {
-    // MATCH!
-    matched.push(id1, id2);
-    const teamClass = mode === 'team' ? 'matched-' + currentTeam : 'matched';
-
-    [id1, id2].forEach(id => {
-      const wrap = document.querySelector(`.card-wrap[data-id="${id}"]`);
-      wrap.classList.add(teamClass);
-      wrap.style.cursor = 'default';
+function checkMatch(){
+  const [id1,id2]=flipped;
+  const c1=cards.find(c=>c.id===id1), c2=cards.find(c=>c.id===id2);
+  if(c1.pairId===c2.pairId&&c1.type!==c2.type){
+    matched.push(id1,id2);
+    const mc=mode==='team'?'matched-'+currentTeam:'matched';
+    c1.mc=mc; c2.mc=mc;
+    [id1,id2].forEach(id=>{
+      const w=document.querySelector(`#grid-t .card-wrap[data-id="${id}"]`);
+      if(w){w.classList.add(mc);w.style.cursor='default';}
     });
-
-    if (mode === 'solo') {
-      scores.solo++;
-      document.getElementById('score-solo').textContent = scores.solo;
-      document.getElementById('message').textContent = '✅ せいかい！';
-    } else {
-      scores[currentTeam]++;
-      document.getElementById('score-' + currentTeam).textContent = scores[currentTeam];
-      document.getElementById('message').textContent = (currentTeam === 'red' ? '🔴 赤' : '🔵 青') + 'チームのポイント！ もう一回！';
-      // same team gets another turn on match
-      renderScoreboard();
-    }
-
-    flipped = [];
-    locked = false;
-
-    if (matched.length === cards.length) {
-      setTimeout(showResult, 500);
-    }
+    if(mode==='solo'){scores.solo++;setMsg('✅ せいかい！');}
+    else{scores[currentTeam]++;setMsg((currentTeam==='red'?'🔴 赤':'🔵 青')+'チームのポイント！もう一回！');renderScoreboard('t');}
+    flipped=[];locked=false;
+    broadcastState();
+    if(matched.length===cards.length)setTimeout(showResult,500);
   } else {
-    // NO MATCH
-    document.getElementById('message').textContent = '❌ ちがいます…';
-    [id1, id2].forEach(id => {
-      const wrap = document.querySelector(`.card-wrap[data-id="${id}"]`);
-      wrap.classList.add('shake');
-      setTimeout(() => { wrap.classList.remove('flipped', 'shake'); }, 600);
+    setMsg('❌ ちがいます…');
+    [id1,id2].forEach(id=>{
+      const w=document.querySelector(`#grid-t .card-wrap[data-id="${id}"]`);
+      if(w){w.classList.add('shake');setTimeout(()=>w.classList.remove('flipped','shake'),600);}
     });
-
-    if (mode === 'team') {
-      currentTeam = currentTeam === 'red' ? 'blue' : 'red';
-      document.getElementById('message').textContent = '❌ ちがいます… ' + (currentTeam === 'red' ? '🔴 赤' : '🔵 青') + 'チームのターン！';
-      // update turn indicator
-      document.querySelectorAll('.score-box').forEach(b => b.classList.remove('current-turn'));
-      const nextBox = document.getElementById('box-' + currentTeam);
-      if (nextBox) nextBox.classList.add('current-turn');
-      document.querySelectorAll('.turn-label').forEach((el, i) => {
-        const teams = ['red', 'blue'];
-        el.textContent = teams[i] === currentTeam ? '← いまのターン' : '';
-      });
-      // update button highlight
-      document.getElementById('btn-team').className = 'btn-mode active-' + currentTeam;
+    if(mode==='team'){
+      currentTeam=currentTeam==='red'?'blue':'red';
+      setMsg('❌ ちがいます… '+(currentTeam==='red'?'🔴 赤':'🔵 青')+'チームのターン！');
+      document.getElementById('btn-team').className='btn-mode active-'+currentTeam;
+      renderScoreboard('t');
     }
-
-    flipped = [];
-    setTimeout(() => {
-      locked = false;
-      if (matched.length < cards.length) {
-        document.getElementById('message').textContent = 'カードをめくってね！';
-      }
-    }, 800);
+    flipped=[];
+    setTimeout(()=>{locked=false;broadcastState();if(matched.length<cards.length)setMsg('カードをめくってね！');},800);
   }
 }
 
-function showResult() {
-  const overlay = document.getElementById('overlay');
-  const title = document.getElementById('result-title');
-  const detail = document.getElementById('result-detail');
-
-  overlay.classList.add('show');
-
-  if (mode === 'solo') {
-    title.textContent = '🎉 クリア！';
-    detail.innerHTML = `スコア：<strong>${scores.solo}</strong> ペア<br>全部そろえました！すごい！`;
-  } else {
-    const winner = scores.red > scores.blue ? '🔴 赤チーム' :
-                   scores.blue > scores.red  ? '🔵 青チーム' : null;
-    if (winner) {
-      title.textContent = `${winner} の勝ち！🏆`;
-      detail.innerHTML = `🔴 赤：<strong>${scores.red}</strong>ペア　🔵 青：<strong>${scores.blue}</strong>ペア`;
-    } else {
-      title.textContent = '🤝 引き分け！';
-      detail.innerHTML = `🔴 赤：<strong>${scores.red}</strong>ペア　🔵 青：<strong>${scores.blue}</strong>ペア<br>どちらもすごい！`;
-    }
+function showResult(){
+  document.getElementById('overlay').classList.add('show');
+  const t=document.getElementById('result-title'),d=document.getElementById('result-detail');
+  if(mode==='solo'){t.textContent='🎉 クリア！';d.innerHTML=`スコア：<strong>${scores.solo}</strong>ペア<br>全部そろえました！`;}
+  else{
+    const w=scores.red>scores.blue?'🔴 赤チーム':scores.blue>scores.red?'🔵 青チーム':null;
+    t.textContent=w?`${w} の勝ち！🏆`:'🤝 引き分け！';
+    d.innerHTML=`🔴 赤：<strong>${scores.red}</strong>ペア　🔵 青：<strong>${scores.blue}</strong>ペア`;
   }
+  broadcastState();
 }
-
-function toggleLabel() {
-  const show = document.getElementById('toggle-label').checked;
-  document.querySelectorAll('.card-type').forEach(el => {
-    el.classList.toggle('hidden-label', !show);
-  });
-}
-
-// ===== START =====
-resetGame();
 </script>
 </body>
 </html>
