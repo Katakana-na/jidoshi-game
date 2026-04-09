@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自動詞・他動詞 神経衰弱ゲーム｜第30課</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  background: #f0f4f8;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+header {
+  background: linear-gradient(135deg, #1e3a5f, #2563eb);
+  color: #fff;
+  width: 100%;
+  padding: 18px 20px;
+  text-align: center;
+}
+header h1 { font-size: 1.4rem; }
+header p { font-size: 0.85rem; opacity: 0.8; margin-top: 4px; }
+
+.controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 16px 0 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.controls button {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+}
+.btn-start { background: #2563eb; color: #fff; }
+.btn-start:hover { background: #1d4ed8; }
+.btn-reset { background: #e5e7eb; color: #374151; }
+.btn-reset:hover { background: #d1d5db; }
+
+.stats {
+  display: flex;
+  gap: 20px;
+  margin: 8px 0 16px;
+  font-size: 0.95rem;
+  color: #374151;
+}
+.stats span { font-weight: 700; color: #2563eb; }
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  max-width: 660px;
+  width: 95%;
+  margin: 0 auto 20px;
+}
+
+.card {
+  aspect-ratio: 3 / 4;
+  border-radius: 12px;
+  cursor: pointer;
+  position: relative;
+  perspective: 600px;
+  user-select: none;
+}
+.card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
+  border-radius: 12px;
+}
+.card.flipped .card-inner { transform: rotateY(180deg); }
+.card.matched .card-inner { transform: rotateY(180deg); }
+
+.card-front, .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+.card-front {
+  background: linear-gradient(145deg, #3b82f6, #1d4ed8);
+  color: #fff;
+  font-size: 2rem;
+}
+.card-back {
+  transform: rotateY(180deg);
+  padding: 8px;
+  text-align: center;
+  border: 3px solid;
+}
+.card-back.jidoushi {
+  background: #dbeafe;
+  border-color: #3b82f6;
+  color: #1e40af;
+}
+.card-back.tadoushi {
+  background: #fce7f3;
+  border-color: #ec4899;
+  color: #9d174d;
+}
+.card-back .verb { font-size: 1.3rem; line-height: 1.4; }
+.card-back .reading { font-size: 0.75rem; color: #6b7280; margin-top: 4px; }
+.card-back .label {
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 6px;
+}
+.jidoushi .label { background: #bfdbfe; color: #1e40af; }
+.tadoushi .label { background: #fbcfe8; color: #9d174d; }
+
+.card.matched { opacity: 0.5; pointer-events: none; }
+.card.matched .card-back { border-color: #22c55e; }
+
+.message {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #16a34a;
+  margin: 12px 0;
+  min-height: 2em;
+}
+
+.pair-list {
+  max-width: 660px;
+  width: 95%;
+  margin: 0 auto 30px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+.pair-list h3 {
+  font-size: 1rem;
+  color: #374151;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 6px;
+}
+.pair-list table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.pair-list th { background: #f3f4f6; padding: 6px 8px; text-align: center; }
+.pair-list td { padding: 6px 8px; text-align: center; border-bottom: 1px solid #f3f4f6; }
+.pair-list .ji { color: #1e40af; font-weight: 600; }
+.pair-list .ta { color: #9d174d; font-weight: 600; }
+
+footer {
+  text-align: center;
+  padding: 16px;
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+@media (max-width: 500px) {
+  .board { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .card-back .verb { font-size: 1.1rem; }
+  .card-front { font-size: 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>自動詞・他動詞 神経衰弱ゲーム</h1>
+  <p>みんなの日本語 第30課｜ペアを見つけよう！</p>
+</header>
+
+<div class="controls">
+  <button class="btn-start" onclick="startGame()">スタート</button>
+  <button class="btn-reset" onclick="resetGame()">リセット</button>
+</div>
+
+<div class="stats">
+  <div>めくった回数：<span id="attempts">0</span></div>
+  <div>見つけたペア：<span id="matched">0</span> / <span id="total">12</span></div>
+</div>
+
+<div class="message" id="message">カードをクリックしてペアを見つけてください！</div>
+
+<div class="board" id="board"></div>
+
+<div class="pair-list">
+  <h3>自動詞・他動詞ペア一覧（第30課まで既習）</h3>
+  <table>
+    <tr><th>自動詞</th><th>読み</th><th></th><th>他動詞</th><th>読み</th><th>意味</th></tr>
+    <tr><td class="ji">開きます</td><td>あきます</td><td>↔</td><td class="ta">開けます</td><td>あけます</td><td>open</td></tr>
+    <tr><td class="ji">閉まります</td><td>しまります</td><td>↔</td><td class="ta">閉めます</td><td>しめます</td><td>close</td></tr>
+    <tr><td class="ji">つきます</td><td>つきます</td><td>↔</td><td class="ta">つけます</td><td>つけます</td><td>turn on</td></tr>
+    <tr><td class="ji">消えます</td><td>きえます</td><td>↔</td><td class="ta">消します</td><td>けします</td><td>turn off</td></tr>
+    <tr><td class="ji">止まります</td><td>とまります</td><td>↔</td><td class="ta">止めます</td><td>とめます</td><td>stop</td></tr>
+    <tr><td class="ji">入ります</td><td>はいります</td><td>↔</td><td class="ta">入れます</td><td>いれます</td><td>enter/put in</td></tr>
+    <tr><td class="ji">出ます</td><td>でます</td><td>↔</td><td class="ta">出します</td><td>だします</td><td>exit/take out</td></tr>
+    <tr><td class="ji">売れます</td><td>うれます</td><td>↔</td><td class="ta">売ります</td><td>うります</td><td>sell</td></tr>
+    <tr><td class="ji">見えます</td><td>みえます</td><td>↔</td><td class="ta">見ます</td><td>みます</td><td>see</td></tr>
+    <tr><td class="ji">聞こえます</td><td>きこえます</td><td>↔</td><td class="ta">聞きます</td><td>ききます</td><td>hear</td></tr>
+    <tr><td class="ji">片付きます</td><td>かたづきます</td><td>↔</td><td class="ta">片付けます</td><td>かたづけます</td><td>tidy up</td></tr>
+    <tr><td class="ji">掛かります</td><td>かかります</td><td>↔</td><td class="ta">掛けます</td><td>かけます</td><td>hang</td></tr>
+  </table>
+</div>
+
+<footer>みんなの日本語 授業設計サポートサイト</footer>
+
+<script>
+const PAIRS = [
+  { ji: '開きます', ji_r: 'あきます', ta: '開けます', ta_r: 'あけます', meaning: 'open' },
+  { ji: '閉まります', ji_r: 'しまります', ta: '閉めます', ta_r: 'しめます', meaning: 'close' },
+  { ji: 'つきます', ji_r: 'つきます', ta: 'つけます', ta_r: 'つけます', meaning: 'turn on' },
+  { ji: '消えます', ji_r: 'きえます', ta: '消します', ta_r: 'けします', meaning: 'turn off' },
+  { ji: '止まります', ji_r: 'とまります', ta: '止めます', ta_r: 'とめます', meaning: 'stop' },
+  { ji: '入ります', ji_r: 'はいります', ta: '入れます', ta_r: 'いれます', meaning: 'enter / put in' },
+  { ji: '出ます', ji_r: 'でます', ta: '出します', ta_r: 'だします', meaning: 'exit / take out' },
+  { ji: '売れます', ji_r: 'うれます', ta: '売ります', ta_r: 'うります', meaning: 'sell' },
+  { ji: '見えます', ji_r: 'みえます', ta: '見ます', ta_r: 'みます', meaning: 'see' },
+  { ji: '聞こえます', ji_r: 'きこえます', ta: '聞きます', ta_r: 'ききます', meaning: 'hear' },
+  { ji: '片付きます', ji_r: 'かたづきます', ta: '片付けます', ta_r: 'かたづけます', meaning: 'tidy up' },
+  { ji: '掛かります', ji_r: 'かかります', ta: '掛けます', ta_r: 'かけます', meaning: 'hang' },
+];
+
+let cards = [];
+let flipped = [];
+let matchedCount = 0;
+let attempts = 0;
+let locked = false;
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function buildCards() {
+  cards = [];
+  PAIRS.forEach((p, idx) => {
+    cards.push({ pairId: idx, type: 'jidoushi', verb: p.ji, reading: p.ji_r, label: '自動詞' });
+    cards.push({ pairId: idx, type: 'tadoushi', verb: p.ta, reading: p.ta_r, label: '他動詞' });
+  });
+  shuffle(cards);
+}
+
+function renderBoard() {
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+  cards.forEach((c, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.index = i;
+    card.innerHTML = `
+      <div class="card-inner">
+        <div class="card-front">?</div>
+        <div class="card-back ${c.type}">
+          <div class="verb">${c.verb}</div>
+          <div class="reading">${c.reading}</div>
+          <div class="label">${c.label}</div>
+        </div>
+      </div>`;
+    card.addEventListener('click', () => flipCard(i));
+    board.appendChild(card);
+  });
+}
+
+function flipCard(index) {
+  if (locked) return;
+  const cardEl = document.querySelectorAll('.card')[index];
+  if (cardEl.classList.contains('flipped') || cardEl.classList.contains('matched')) return;
+  if (flipped.length >= 2) return;
+
+  cardEl.classList.add('flipped');
+  flipped.push(index);
+
+  if (flipped.length === 2) {
+    attempts++;
+    document.getElementById('attempts').textContent = attempts;
+    locked = true;
+    checkMatch();
+  }
+}
+
+function checkMatch() {
+  const [i1, i2] = flipped;
+  const c1 = cards[i1];
+  const c2 = cards[i2];
+  const els = document.querySelectorAll('.card');
+
+  if (c1.pairId === c2.pairId && c1.type !== c2.type) {
+    // Match!
+    setTimeout(() => {
+      els[i1].classList.add('matched');
+      els[i2].classList.add('matched');
+      matchedCount++;
+      document.getElementById('matched').textContent = matchedCount;
+      flipped = [];
+      locked = false;
+
+      if (matchedCount === PAIRS.length) {
+        document.getElementById('message').textContent =
+          `おめでとうございます！ ${attempts}回で全ペア見つけました！`;
+      } else {
+        const p = PAIRS[c1.pairId];
+        document.getElementById('message').textContent =
+          `○ ${p.ji}（自動詞）↔ ${p.ta}（他動詞）`;
+      }
+    }, 500);
+  } else {
+    // No match
+    setTimeout(() => {
+      els[i1].classList.remove('flipped');
+      els[i2].classList.remove('flipped');
+      flipped = [];
+      locked = false;
+      document.getElementById('message').textContent = '× ちがいます。もう一度！';
+    }, 1000);
+  }
+}
+
+function startGame() {
+  matchedCount = 0;
+  attempts = 0;
+  flipped = [];
+  locked = false;
+  document.getElementById('attempts').textContent = '0';
+  document.getElementById('matched').textContent = '0';
+  document.getElementById('message').textContent = 'カードをクリックしてペアを見つけてください！';
+  buildCards();
+  renderBoard();
+}
+
+function resetGame() {
+  startGame();
+}
+
+// 初期表示
+startGame();
+</script>
+</body>
+</html>
