@@ -102,18 +102,17 @@
   .score-box.team-red  .score-name, .score-box.team-red  .score-num { color: var(--red); }
   .score-box.team-blue .score-name, .score-box.team-blue .score-num { color: var(--blue); }
 
-  .message { min-height: 24px; font-size: 14px; font-weight: 700; color: #3949ab; text-align: center; margin-bottom: 10px; }
 
   .grid { display: grid; gap: 10px; justify-content: center; justify-items: center; }
 
   /* カード番号（裏面中央・カードサイズ連動） */
   .card-num {
+    position: static;
     font-size: calc(var(--card-h) * 0.55);
     font-weight: 900;
     color: white;
     text-shadow: 0 2px 8px rgba(0,0,0,0.4);
-    letter-spacing: -1px;
-    line-height: 1;
+    text-align: center;
   }
 
   /* ===== カード ===== */
@@ -232,7 +231,6 @@
   <div class="right-panel">
     <h1>🃏 自動詞・他動詞 神経衰弱</h1>
     <div class="scoreboard" id="scoreboard-t"></div>
-    <div class="message"    id="message-t">カードをめくってね！</div>
     <div class="grid"       id="grid-t"></div>
   </div>
 </div>
@@ -241,7 +239,6 @@
 <div class="student-layout" id="student-layout" style="display:none">
   <div class="student-badge">📺 生徒画面</div>
   <div class="scoreboard" id="scoreboard-s"></div>
-  <div class="message"    id="message-s">カードをめくってね！</div>
   <div class="grid"       id="grid-s"></div>
 </div>
 
