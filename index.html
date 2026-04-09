@@ -8,9 +8,9 @@
   @import url('https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;700&family=Noto+Sans+JP:wght@400;700;900&display=swap');
 
   :root {
-    --card-w: 140px;
-    --card-h: 100px;
-    --font-size: 22px;
+    --card-w: 200px;
+    --card-h: 140px;
+    --font-size: 30px;
     --bg: #f0f4ff;
     --panel-bg: #1a237e;
     --red: #e53935;
@@ -87,7 +87,12 @@
 
   /* ===== 生徒レイアウト ===== */
   .student-layout { display: flex; flex-direction: column; align-items: center; padding: 16px; min-height: 100vh; }
-  .student-badge { background: #1a237e; color: white; font-size: 11px; font-weight: 700; padding: 3px 14px; border-radius: 20px; margin-bottom: 10px; letter-spacing: 1px; }
+  /* 生徒画面のスコアを大きく */
+  #student-layout .scoreboard { gap: 30px; margin-bottom: 20px; }
+  #student-layout .score-box { padding: 16px 40px; min-width: 180px; }
+  #student-layout .score-name { font-size: 20px; }
+  #student-layout .score-num { font-size: 72px; }
+  #student-layout .turn-label { font-size: 16px; }
 
   /* ===== 共通部品 ===== */
   h1 { font-family: 'Kaisei Decol', serif; font-size: 22px; color: #1a237e; margin-bottom: 10px; text-align: center; letter-spacing: 2px; }
@@ -189,22 +194,22 @@
     <div class="ctrl-group">
       <span class="ctrl-label">カード幅</span>
       <div class="slider-row">
-        <input type="range" min="90" max="240" value="140" id="sl-w" oninput="updateCard()">
-        <span class="slider-val" id="val-w">140</span>
+        <input type="range" min="90" max="320" value="200" id="sl-w" oninput="updateCard()">
+        <span class="slider-val" id="val-w">200</span>
       </div>
     </div>
     <div class="ctrl-group">
       <span class="ctrl-label">カード高さ</span>
       <div class="slider-row">
-        <input type="range" min="70" max="200" value="100" id="sl-h" oninput="updateCard()">
-        <span class="slider-val" id="val-h">100</span>
+        <input type="range" min="70" max="260" value="140" id="sl-h" oninput="updateCard()">
+        <span class="slider-val" id="val-h">140</span>
       </div>
     </div>
     <div class="ctrl-group">
       <span class="ctrl-label">文字サイズ</span>
       <div class="slider-row">
-        <input type="range" min="12" max="40" value="22" id="sl-f" oninput="updateCard()">
-        <span class="slider-val" id="val-f">22</span>
+        <input type="range" min="12" max="56" value="30" id="sl-f" oninput="updateCard()">
+        <span class="slider-val" id="val-f">30</span>
       </div>
     </div>
 
@@ -237,7 +242,6 @@
 
 <!-- 生徒画面 -->
 <div class="student-layout" id="student-layout" style="display:none">
-  <div class="student-badge">📺 生徒画面</div>
   <div class="scoreboard" id="scoreboard-s"></div>
   <div class="grid"       id="grid-s"></div>
 </div>
@@ -286,23 +290,23 @@ ch.onmessage = e => {
 };
 
 function broadcastState() {
-  const root = document.documentElement;
+  const slW = document.getElementById('sl-w');
+  const slH = document.getElementById('sl-h');
+  const slF = document.getElementById('sl-f');
   ch.postMessage({ cards, scores, flipped, matched, mode, currentTeam, showLabel,
-    msg: document.getElementById('message-t')?.textContent || '',
-    cardW: getComputedStyle(root).getPropertyValue('--card-w').trim(),
-    cardH: getComputedStyle(root).getPropertyValue('--card-h').trim(),
-    fontSize: getComputedStyle(root).getPropertyValue('--font-size').trim()
+    cardW: slW ? slW.value : '200',
+    cardH: slH ? slH.value : '140',
+    fontF: slF ? slF.value : '30'
   });
 }
 
 function applyState(s) {
   cards=s.cards; scores=s.scores; flipped=s.flipped; matched=s.matched;
   mode=s.mode; currentTeam=s.currentTeam; showLabel=s.showLabel;
-  if (s.cardW) document.documentElement.style.setProperty('--card-w', s.cardW);
-  if (s.cardH) document.documentElement.style.setProperty('--card-h', s.cardH);
-  if (s.fontSize) document.documentElement.style.setProperty('--font-size', s.fontSize);
+  if (s.cardW) document.documentElement.style.setProperty('--card-w', s.cardW+'px');
+  if (s.cardH) document.documentElement.style.setProperty('--card-h', s.cardH+'px');
+  if (s.fontF) document.documentElement.style.setProperty('--font-size', s.fontF+'px');
   renderScoreboard('s'); renderGrid('s');
-  const el=document.getElementById('message-s'); if(el) el.textContent=s.msg;
 }
 
 // ===== 初期化 =====
