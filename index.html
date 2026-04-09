@@ -5,488 +5,560 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>自動詞・他動詞 神経衰弱</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;700&family=Noto+Sans+JP:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@400;700&family=Noto+Sans+JP:wght@400;700;900&display=swap');
 
-  :root {
-    --card-w: 200px;
-    --card-h: 140px;
-    --font-size: 30px;
-    --bg: #f0f4ff;
-    --panel-bg: #1a237e;
-    --red: #e53935;
-    --blue: #1e88e5;
-    --green: #43a047;
-    --gold: #f9a825;
-    --card-back: #3949ab;
-    --matched: #c8e6c9;
-    --shadow: 0 4px 16px rgba(0,0,0,0.13);
-    --radius: 12px;
-  }
+:root {
+  --cw: 160px;
+  --ch: 110px;
+  --cf: 24px;
+  --cscore: 80px;
+  --bg: #eef1fb;
+  --navy: #1a237e;
+  --indigo: #3949ab;
+  --indigo2: #5c6bc0;
+  --red: #e53935;
+  --blue: #1e88e5;
+  --green: #43a047;
+  --gold: #f9a825;
+  --shadow: 0 4px 18px rgba(0,0,0,0.13);
+  --r: 14px;
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); min-height: 100vh; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); min-height: 100vh; }
 
-  /* ===== 先生レイアウト ===== */
-  .teacher-layout { display: flex; min-height: 100vh; }
+/* ===== 先生レイアウト ===== */
+#teacher { display: flex; min-height: 100vh; }
 
-  .left-panel {
-    width: 250px; min-width: 250px;
-    background: var(--panel-bg);
-    color: white;
-    display: flex; flex-direction: column;
-    padding: 14px 12px; gap: 12px;
-    overflow-y: auto;
-  }
+/* 左パネル */
+#panel {
+  width: 260px; min-width: 260px; max-width: 260px;
+  background: var(--navy);
+  display: flex; flex-direction: column;
+  padding: 12px; gap: 10px;
+  overflow-y: auto; flex-shrink: 0;
+}
 
-  .panel-title {
-    font-family: 'Kaisei Decol', serif;
-    font-size: 15px; color: #c5cae9;
-    text-align: center; letter-spacing: 1px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #3949ab;
-  }
+.ptitle {
+  font-family: 'Kaisei Decol', serif;
+  font-size: 15px; color: #c5cae9;
+  text-align: center; padding-bottom: 9px;
+  border-bottom: 1px solid var(--indigo);
+}
 
-  .ctrl-group { display: flex; flex-direction: column; gap: 5px; }
-  .ctrl-label { font-size: 10px; color: #9fa8da; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
-  .btn-row { display: flex; flex-wrap: wrap; gap: 4px; }
+.plabel { font-size: 10px; color: #7986cb; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
+.prow   { display: flex; flex-wrap: wrap; gap: 4px; }
+.phr    { border: none; border-top: 1px solid var(--indigo); margin: 0; }
+.psl    { display: flex; align-items: center; gap: 6px; }
+.psl input[type=range] { flex: 1; accent-color: var(--indigo2); }
+.psl span { font-size: 12px; color: #7986cb; width: 28px; text-align: right; }
 
-  button { font-family: 'Noto Sans JP', sans-serif; border: none; cursor: pointer; border-radius: 8px; font-weight: 700; transition: all 0.15s; }
+/* パネルボタン */
+button { font-family: 'Noto Sans JP', sans-serif; border: none; cursor: pointer; font-weight: 700; transition: .15s; }
+.bcnt { background: var(--indigo); color: #c5cae9; padding: 5px 10px; font-size: 12px; border-radius: 6px; }
+.bcnt.on { background: var(--indigo2); color: #fff; }
+.bmode { padding: 7px 6px; font-size: 12px; border-radius: 6px; background: var(--indigo); color: #c5cae9; flex: 1; }
+.bmode.solo { background: var(--green); color: #fff; }
+.bmode.red  { background: var(--red);   color: #fff; }
+.bmode.blue { background: var(--blue);  color: #fff; }
 
-  .btn-count { background: #3949ab; color: #c5cae9; padding: 5px 9px; font-size: 12px; }
-  .btn-count.active { background: #7986cb; color: white; }
+.pbtns { display: flex; gap: 5px; }
+.pbtns button { flex: 1; padding: 8px 2px; font-size: 12px; border-radius: 6px; }
+.b-reset { background: #ff7043; color: #fff; }
+.b-fs    { background: var(--indigo2); color: #fff; }
+.b-student { width: 100%; padding: 9px; font-size: 13px; border-radius: 6px; background: var(--gold); color: var(--navy); font-weight: 900; }
 
-  .btn-mode { padding: 6px 8px; font-size: 12px; background: #3949ab; color: #c5cae9; flex: 1; }
-  .btn-mode.active-solo { background: var(--green); color: white; }
-  .btn-mode.active-red  { background: var(--red);   color: white; }
-  .btn-mode.active-blue { background: var(--blue);  color: white; }
+.sw-row { display: flex; align-items: center; justify-content: space-between; }
+.sw-row > span { font-size: 12px; color: #c5cae9; }
+.sw { position: relative; width: 38px; height: 20px; flex-shrink: 0; }
+.sw input { display: none; }
+.sw-sl { position: absolute; inset: 0; background: var(--indigo); border-radius: 20px; cursor: pointer; transition: .3s; }
+.sw-sl::before { content: ''; position: absolute; width: 14px; height: 14px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: .3s; }
+.sw input:checked + .sw-sl { background: var(--indigo2); }
+.sw input:checked + .sw-sl::before { transform: translateX(18px); }
 
-  .btn-wide { width: 100%; padding: 8px; font-size: 13px; border-radius: 8px; }
-  .btn-reset   { background: #ff7043; color: white; }
-  .btn-reset:hover { background: #e64a19; }
-  .btn-fs      { background: #5c6bc0; color: white; }
-  .btn-student { background: var(--gold); color: #1a237e; font-weight: 900; }
-  .btn-student:hover { background: #f57f17; color: white; }
+/* 右盤面 */
+#board { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 16px; overflow-y: auto; min-width: 0; }
 
-  .slider-row { display: flex; align-items: center; gap: 6px; }
-  input[type=range] { flex: 1; accent-color: #7986cb; }
-  .slider-val { font-size: 11px; color: #9fa8da; width: 28px; text-align: right; }
+/* ===== 生徒レイアウト ===== */
+#student { display: flex; flex-direction: column; align-items: center; padding: 20px 16px; min-height: 100vh; }
 
-  .switch-wrap { display: flex; align-items: center; justify-content: space-between; }
-  .switch-wrap > span { font-size: 12px; color: #c5cae9; }
-  .switch { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
-  .switch input { display: none; }
-  .slider-sw { position: absolute; inset: 0; background: #3949ab; border-radius: 22px; cursor: pointer; transition: .3s; }
-  .slider-sw::before { content: ''; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; background: white; border-radius: 50%; transition: .3s; }
-  .switch input:checked + .slider-sw { background: #7986cb; }
-  .switch input:checked + .slider-sw::before { transform: translateX(18px); }
+/* ===== スコア ===== */
+.scoreboard { display: flex; gap: 16px; margin-bottom: 14px; justify-content: center; }
 
-  .divider { border: none; border-top: 1px solid #3949ab; }
+/* 先生スコア（小さめ） */
+.sc-box {
+  background: #fff; border-radius: var(--r);
+  box-shadow: var(--shadow);
+  padding: 8px 16px; text-align: center;
+  min-width: 85px;
+  border: 3px solid transparent; transition: border-color .3s;
+}
+.sc-box.cur { border-color: var(--gold); box-shadow: 0 0 12px rgba(249,168,37,.4); }
+.sc-name { font-size: 12px; font-weight: 700; }
+.sc-num  { font-size: 26px; font-weight: 900; line-height: 1.1; }
+.sc-turn { font-size: 10px; color: #999; }
+.sc-box.solo  .sc-name, .sc-box.solo  .sc-num { color: var(--green); }
+.sc-box.t-red  .sc-name, .sc-box.t-red  .sc-num { color: var(--red); }
+.sc-box.t-blue .sc-name, .sc-box.t-blue .sc-num { color: var(--blue); }
 
-  /* 右パネル */
-  .right-panel { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 16px; overflow-y: auto; }
+/* 生徒スコア（大きめ・カードサイズ連動） */
+#student .sc-box {
+  padding: calc(var(--cscore) * .18) calc(var(--cscore) * .4);
+  min-width: calc(var(--cscore) * 2.2);
+  border-radius: 18px; border-width: 4px;
+}
+#student .sc-name { font-size: calc(var(--cscore) * .28); }
+#student .sc-num  { font-size: var(--cscore); line-height: 1; }
+#student .sc-turn { font-size: calc(var(--cscore) * .18); }
+#student .scoreboard { gap: calc(var(--cscore) * .4); margin-bottom: calc(var(--cscore) * .3); }
 
-  /* ===== 生徒レイアウト ===== */
-  .student-layout { display: flex; flex-direction: column; align-items: center; padding: 16px; min-height: 100vh; }
-  /* 生徒画面のスコア（カードサイズ連動） */
-  #student-layout .scoreboard { gap: 30px; margin-bottom: 20px; }
-  #student-layout .score-box { padding: calc(var(--card-h) * 0.1) calc(var(--card-w) * 0.2); min-width: calc(var(--card-w) * 1.3); border-radius: 16px; }
-  #student-layout .score-name { font-size: calc(var(--card-h) * 0.18); }
-  #student-layout .score-num { font-size: calc(var(--card-h) * 0.7); line-height: 1; }
-  #student-layout .turn-label { font-size: calc(var(--card-h) * 0.12); }
+/* ===== グリッド ===== */
+.grid { display: grid; gap: 10px; justify-content: center; }
 
-  /* ===== 共通部品 ===== */
-  h1 { font-family: 'Kaisei Decol', serif; font-size: 22px; color: #1a237e; margin-bottom: 10px; text-align: center; letter-spacing: 2px; }
+/* ===== カード ===== */
+.card { width: var(--cw); height: var(--ch); perspective: 900px; cursor: pointer; }
+.card.ro { cursor: default; }
 
-  .scoreboard { display: flex; gap: 14px; margin-bottom: 8px; justify-content: center; }
-  .score-box { background: white; border-radius: var(--radius); box-shadow: var(--shadow); padding: 8px 18px; text-align: center; min-width: 95px; border: 3px solid transparent; transition: border-color .3s; }
-  .score-box.current-turn { border-color: var(--gold); box-shadow: 0 0 10px rgba(249,168,37,.4); }
-  .score-name { font-size: 12px; font-weight: 700; }
-  .score-num  { font-size: 28px; font-weight: 900; line-height: 1.1; }
-  .turn-label { font-size: 10px; color: #999; }
-  .score-box.solo      .score-name, .score-box.solo      .score-num { color: var(--green); }
-  .score-box.team-red  .score-name, .score-box.team-red  .score-num { color: var(--red); }
-  .score-box.team-blue .score-name, .score-box.team-blue .score-num { color: var(--blue); }
+.ci {
+  width: 100%; height: 100%;
+  position: relative; transform-style: preserve-3d;
+  transition: transform .45s cubic-bezier(.4,0,.2,1);
+  border-radius: var(--r);
+}
+.card.fp .ci, .card.mp .ci,
+.card.mr .ci, .card.mb .ci { transform: rotateY(180deg); }
 
+.cf {
+  position: absolute; width: 100%; height: 100%;
+  border-radius: var(--r); backface-visibility: hidden;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  box-shadow: var(--shadow); user-select: none;
+}
 
-  .grid { display: grid; gap: 10px; justify-content: center; justify-items: center; }
+/* 裏面：番号のみ大きく */
+.back {
+  background: #3949ab;
+  font-size: calc(var(--ch) * .55);
+  font-weight: 900; color: #fff;
+  text-shadow: 0 2px 10px rgba(0,0,0,.35);
+}
 
-  /* カード番号（裏面中央・カードサイズ連動） */
-  .card-num {
-    position: static;
-    font-size: calc(var(--card-h) * 0.55);
-    font-weight: 900;
-    color: white;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.4);
-    text-align: center;
-  }
+/* 表面 */
+.front {
+  background: #fff; transform: rotateY(180deg);
+  border: 2px solid #e0e0e0;
+  justify-content: flex-start;
+  padding: 8px 4px 6px;
+  gap: 0;
+}
+.card.mp .front { background: #e8f5e9; border-color: var(--green); }
+.card.mr .front { background: #ffebee; border-color: var(--red); }
+.card.mb .front { background: #e3f2fd; border-color: var(--blue); }
 
-  /* ===== カード ===== */
-  .card-wrap { width: var(--card-w); height: var(--card-h); perspective: 800px; cursor: pointer; }
-  .card-wrap.readonly { cursor: default; }
+.clabel {
+  font-size: calc(var(--ch) * .13);
+  font-weight: 700; padding: 1px 8px; border-radius: 5px;
+  margin-bottom: 4px; flex-shrink: 0;
+}
+.clabel.hi { visibility: hidden; }
+.jido .clabel { background: #e3f2fd; color: var(--blue); }
+.tado .clabel { background: #fce4ec; color: var(--red); }
 
-  .card-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform .4s cubic-bezier(.4,0,.2,1); border-radius: var(--radius); }
-  .card-wrap.flipped .card-inner,
-  .card-wrap.matched  .card-inner,
-  .card-wrap.matched-red  .card-inner,
-  .card-wrap.matched-blue .card-inner { transform: rotateY(180deg); }
+.cword {
+  flex: 1; display: flex;
+  align-items: flex-end; justify-content: center;
+  padding-bottom: 5px;
+  font-size: var(--cf); font-weight: 700; color: #1a1a2e;
+  text-align: center; line-height: 1.3; width: 100%;
+}
 
-  .card-face { position: absolute; width: 100%; height: 100%; border-radius: var(--radius); backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: var(--shadow); user-select: none; }
+ruby { ruby-align: center; vertical-align: bottom; }
+rt   { font-size: .45em; color: #888; }
 
-  .card-back-face { background: var(--card-back); display: flex; align-items: center; justify-content: center; }
+/* ===== アニメ ===== */
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-7px)} 75%{transform:translateX(7px)} }
+.shake { animation: shake .3s ease; }
 
-  .card-front-face { background: white; transform: rotateY(180deg); border: 2px solid #e0e0e0; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 8px; gap: 4px; }
-  .card-wrap.matched      .card-front-face { background: var(--matched); border-color: var(--green); }
-  .card-wrap.matched-red  .card-front-face { background: #ffebee; border-color: var(--red); }
-  .card-wrap.matched-blue .card-front-face { background: #e3f2fd; border-color: var(--blue); }
-
-  .card-type { font-size: calc(var(--card-h) * 0.12); font-weight: 700; padding: 2px 10px; border-radius: 4px; }
-  .card-type.hidden-label { visibility: hidden; }
-  .jido .card-type { background: #e3f2fd; color: var(--blue); }
-  .tado .card-type { background: #fce4ec; color: var(--red); }
-
-  .card-word { flex: 1; display: flex; align-items: center; justify-content: center; font-size: var(--font-size); font-weight: 700; color: #1a1a2e; text-align: center; line-height: 1.3; }
-
-  rt { font-size: 0.5em; color: #888; }
-
-  /* ===== オーバーレイ ===== */
-  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 100; align-items: center; justify-content: center; }
-  .overlay.show { display: flex; }
-  .result-box { background: white; border-radius: 20px; padding: 36px 44px; text-align: center; box-shadow: 0 8px 40px rgba(0,0,0,.3); animation: pop .4s cubic-bezier(.34,1.56,.64,1); }
-  @keyframes pop { from{transform:scale(.7);opacity:0} to{transform:scale(1);opacity:1} }
-  .result-title  { font-family: 'Kaisei Decol', serif; font-size: 30px; color: #1a237e; margin-bottom: 8px; }
-  .result-detail { font-size: 15px; color: #555; margin-bottom: 18px; line-height: 1.8; }
-  .btn-play-again { background: #3949ab; color: white; padding: 10px 26px; font-size: 14px; border-radius: 10px; font-family: 'Noto Sans JP', sans-serif; font-weight: 700; }
-
-  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
-  .shake { animation: shake .3s ease; }
+/* ===== 結果オーバーレイ ===== */
+.ov { display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:100; align-items:center; justify-content:center; }
+.ov.show { display:flex; }
+.ov-box { background:#fff; border-radius:20px; padding:36px 44px; text-align:center; box-shadow:0 8px 40px rgba(0,0,0,.3); animation:pop .4s cubic-bezier(.34,1.56,.64,1); }
+@keyframes pop { from{transform:scale(.7);opacity:0} to{transform:scale(1);opacity:1} }
+.ov-title  { font-family:'Kaisei Decol',serif; font-size:30px; color:var(--navy); margin-bottom:8px; }
+.ov-detail { font-size:15px; color:#555; margin-bottom:18px; line-height:1.8; }
+.b-again { background:var(--indigo); color:#fff; padding:10px 26px; font-size:14px; border-radius:10px; font-family:'Noto Sans JP',sans-serif; font-weight:700; }
 </style>
 </head>
 <body>
 
-<!-- 先生画面 -->
-<div class="teacher-layout" id="teacher-layout" style="display:none">
-  <div class="left-panel">
-    <div class="panel-title">🃏 自動詞・他動詞<br>神経衰弱</div>
+<!-- ===== 先生画面 ===== -->
+<div id="teacher" style="display:none">
 
-    <div class="ctrl-group">
-      <span class="ctrl-label">カード枚数</span>
-      <div class="btn-row" id="count-btns">
-        <button class="btn-count" onclick="setCount(4)">4枚</button>
-        <button class="btn-count active" onclick="setCount(8)">8枚</button>
-        <button class="btn-count" onclick="setCount(12)">12枚</button>
-        <button class="btn-count" onclick="setCount(16)">16枚</button>
-        <button class="btn-count" onclick="setCount(20)">20枚</button>
-        <button class="btn-count" onclick="setCount(24)">24枚</button>
+  <!-- 左パネル -->
+  <div id="panel">
+    <div class="ptitle">🃏 自動詞・他動詞<br>神経衰弱</div>
+
+    <div>
+      <div class="plabel">カード枚数</div>
+      <div class="prow" id="cnt-btns">
+        <button class="bcnt" onclick="setN(4)">4枚</button>
+        <button class="bcnt on" onclick="setN(8)">8枚</button>
+        <button class="bcnt" onclick="setN(12)">12枚</button>
+        <button class="bcnt" onclick="setN(16)">16枚</button>
+        <button class="bcnt" onclick="setN(20)">20枚</button>
+        <button class="bcnt" onclick="setN(24)">24枚</button>
       </div>
     </div>
 
-    <div class="ctrl-group">
-      <span class="ctrl-label">モード</span>
-      <div class="btn-row">
-        <button class="btn-mode active-solo" id="btn-solo" onclick="setMode('solo')">👤 1人</button>
-        <button class="btn-mode" id="btn-team" onclick="setMode('team')">🔴 vs 🔵</button>
+    <div>
+      <div class="plabel">モード</div>
+      <div class="prow">
+        <button class="bmode solo" id="bsolo" onclick="setMode('solo')">👤 1人</button>
+        <button class="bmode"      id="bteam" onclick="setMode('team')">🔴 vs 🔵</button>
       </div>
     </div>
 
-    <hr class="divider">
+    <hr class="phr">
 
-    <div class="ctrl-group">
-      <span class="ctrl-label">カード幅</span>
-      <div class="slider-row">
-        <input type="range" min="90" max="320" value="200" id="sl-w" oninput="updateCard()">
-        <span class="slider-val" id="val-w">200</span>
-      </div>
-    </div>
-    <div class="ctrl-group">
-      <span class="ctrl-label">カード高さ</span>
-      <div class="slider-row">
-        <input type="range" min="70" max="260" value="140" id="sl-h" oninput="updateCard()">
-        <span class="slider-val" id="val-h">140</span>
-      </div>
-    </div>
-    <div class="ctrl-group">
-      <span class="ctrl-label">文字サイズ</span>
-      <div class="slider-row">
-        <input type="range" min="12" max="56" value="30" id="sl-f" oninput="updateCard()">
-        <span class="slider-val" id="val-f">30</span>
+    <div>
+      <div class="plabel">カード幅</div>
+      <div class="psl">
+        <input type="range" min="100" max="300" value="160" id="sl-cw" oninput="upd()">
+        <span id="v-cw">160</span>
       </div>
     </div>
 
-    <hr class="divider">
+    <div>
+      <div class="plabel">カード高さ</div>
+      <div class="psl">
+        <input type="range" min="70" max="240" value="110" id="sl-ch" oninput="upd()">
+        <span id="v-ch">110</span>
+      </div>
+    </div>
 
-    <div class="ctrl-group">
-      <span class="ctrl-label">ラベル表示</span>
-      <label class="switch-wrap">
+    <div>
+      <div class="plabel">カード文字サイズ</div>
+      <div class="psl">
+        <input type="range" min="12" max="52" value="24" id="sl-cf" oninput="upd()">
+        <span id="v-cf">24</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="plabel">スコア文字サイズ</div>
+      <div class="psl">
+        <input type="range" min="40" max="200" value="80" id="sl-cs" oninput="upd()">
+        <span id="v-cs">80</span>
+      </div>
+    </div>
+
+    <hr class="phr">
+
+    <div>
+      <div class="plabel">ラベル表示</div>
+      <label class="sw-row">
         <span>自動詞・他動詞</span>
-        <label class="switch">
-          <input type="checkbox" id="toggle-label" checked onchange="toggleLabel()">
-          <span class="slider-sw"></span>
+        <label class="sw">
+          <input type="checkbox" id="tgl" checked onchange="togLabel()">
+          <span class="sw-sl"></span>
         </label>
       </label>
     </div>
 
-    <hr class="divider">
+    <hr class="phr">
 
-    <button class="btn-wide btn-reset" onclick="resetGame()">🔀 リセット</button>
-    <button class="btn-wide btn-fs" onclick="toggleFS()">⛶ 全画面</button>
-    <button class="btn-wide btn-student" onclick="openStudentWindow()">📺 生徒画面を開く</button>
+    <div class="pbtns">
+      <button class="b-reset" onclick="reset()">🔀 リセット</button>
+      <button class="b-fs"    onclick="goFS()">⛶ 全画面</button>
+    </div>
+    <button class="b-student" onclick="openS()">📺 生徒画面を開く</button>
+
+  </div><!-- /panel -->
+
+  <!-- 右盤面 -->
+  <div id="board">
+    <div class="scoreboard" id="sb-t"></div>
+    <div class="grid"       id="g-t"></div>
   </div>
 
-  <div class="right-panel">
-    <h1>🃏 自動詞・他動詞 神経衰弱</h1>
-    <div class="scoreboard" id="scoreboard-t"></div>
-    <div class="grid"       id="grid-t"></div>
-  </div>
+</div><!-- /teacher -->
+
+<!-- ===== 生徒画面 ===== -->
+<div id="student" style="display:none">
+  <div class="scoreboard" id="sb-s"></div>
+  <div class="grid"       id="g-s"></div>
 </div>
 
-<!-- 生徒画面 -->
-<div class="student-layout" id="student-layout" style="display:none">
-  <div class="scoreboard" id="scoreboard-s"></div>
-  <div class="grid"       id="grid-s"></div>
-</div>
-
-<!-- 結果オーバーレイ -->
-<div class="overlay" id="overlay">
-  <div class="result-box">
-    <div class="result-title"  id="result-title">🎉 おわり！</div>
-    <div class="result-detail" id="result-detail"></div>
-    <button class="btn-play-again" onclick="resetGame();document.getElementById('overlay').classList.remove('show')">もう一度！</button>
+<!-- ===== 結果 ===== -->
+<div class="ov" id="ov">
+  <div class="ov-box">
+    <div class="ov-title"  id="ov-t">🎉 おわり！</div>
+    <div class="ov-detail" id="ov-d"></div>
+    <button class="b-again" onclick="reset();document.getElementById('ov').classList.remove('show')">もう一度！</button>
   </div>
 </div>
 
 <script>
-const isStudent = new URLSearchParams(location.search).has('student');
-const ch = new BroadcastChannel('jidoshi_game');
-
-const ALL_PAIRS = [
-  { jido:'<ruby>開<rt>あ</rt></ruby>きます',       tado:'<ruby>開<rt>あ</rt></ruby>けます' },
-  { jido:'<ruby>閉<rt>し</rt></ruby>まります',     tado:'<ruby>閉<rt>し</rt></ruby>めます' },
-  { jido:'<ruby>消<rt>き</rt></ruby>えます',       tado:'<ruby>消<rt>け</rt></ruby>します' },
-  { jido:'<ruby>止<rt>と</rt></ruby>まります',     tado:'<ruby>止<rt>と</rt></ruby>めます' },
-  { jido:'つきます',                               tado:'つけます' },
-  { jido:'<ruby>入<rt>はい</rt></ruby>ります',     tado:'<ruby>入<rt>い</rt></ruby>れます' },
-  { jido:'<ruby>出<rt>で</rt></ruby>ます',         tado:'<ruby>出<rt>だ</rt></ruby>します' },
-  { jido:'<ruby>売<rt>う</rt></ruby>れます',       tado:'<ruby>売<rt>う</rt></ruby>ります' },
-  { jido:'<ruby>見<rt>み</rt></ruby>えます',       tado:'<ruby>見<rt>み</rt></ruby>ます' },
-  { jido:'<ruby>聞<rt>き</rt></ruby>こえます',     tado:'<ruby>聞<rt>き</rt></ruby>きます' },
-  { jido:'<ruby>片付<rt>かたづ</rt></ruby>きます', tado:'<ruby>片付<rt>かたづ</rt></ruby>けます' },
-  { jido:'<ruby>掛<rt>か</rt></ruby>かります',     tado:'<ruby>掛<rt>か</rt></ruby>けます' },
+// ===== 定数 =====
+const PAIRS = [
+  { j:'<ruby>開<rt>あ</rt></ruby>きます',       t:'<ruby>開<rt>あ</rt></ruby>けます' },
+  { j:'<ruby>閉<rt>し</rt></ruby>まります',     t:'<ruby>閉<rt>し</rt></ruby>めます' },
+  { j:'<ruby>消<rt>き</rt></ruby>えます',       t:'<ruby>消<rt>け</rt></ruby>します' },
+  { j:'<ruby>止<rt>と</rt></ruby>まります',     t:'<ruby>止<rt>と</rt></ruby>めます' },
+  { j:'つきます',                               t:'つけます' },
+  { j:'<ruby>入<rt>はい</rt></ruby>ります',     t:'<ruby>入<rt>い</rt></ruby>れます' },
+  { j:'<ruby>出<rt>で</rt></ruby>ます',         t:'<ruby>出<rt>だ</rt></ruby>します' },
+  { j:'<ruby>売<rt>う</rt></ruby>れます',       t:'<ruby>売<rt>う</rt></ruby>ります' },
+  { j:'<ruby>見<rt>み</rt></ruby>えます',       t:'<ruby>見<rt>み</rt></ruby>ます' },
+  { j:'<ruby>聞<rt>き</rt></ruby>こえます',     t:'<ruby>聞<rt>き</rt></ruby>きます' },
+  { j:'<ruby>片付<rt>かたづ</rt></ruby>きます', t:'<ruby>片付<rt>かたづ</rt></ruby>けます' },
+  { j:'<ruby>掛<rt>か</rt></ruby>かります',     t:'<ruby>掛<rt>か</rt></ruby>けます' },
 ];
+const COLS = {4:2, 8:4, 12:4, 16:4, 20:5, 24:6};
 
-let cardCount=8, mode='solo', currentTeam='red';
-let scores={solo:0,red:0,blue:0};
+// ===== モード判定 =====
+const isS = new URLSearchParams(location.search).has('student');
+const bc  = new BroadcastChannel('jg3');
+
+// ===== 状態 =====
+let N=8, mode='solo', team='red';
+let score={solo:0,red:0,blue:0};
 let flipped=[], matched=[], locked=false, cards=[];
-let showLabel=true;
+let showLbl=true;
+let vcw=160, vch=110, vcf=24, vcs=80;
 
 // ===== 同期 =====
-ch.onmessage = e => {
-  if (isStudent) {
-    if (e.data === 'request') return;
-    applyState(e.data);
+bc.onmessage = e => {
+  if (isS) {
+    if (e.data === 'req') return;
+    recv(e.data);
   } else {
-    if (e.data === 'request') broadcastState();
+    if (e.data === 'req') send();
   }
 };
 
-function broadcastState() {
-  const slW = document.getElementById('sl-w');
-  const slH = document.getElementById('sl-h');
-  const slF = document.getElementById('sl-f');
-  ch.postMessage({ cards, scores, flipped, matched, mode, currentTeam, showLabel,
-    cardW: slW ? slW.value : '200',
-    cardH: slH ? slH.value : '140',
-    fontF: slF ? slF.value : '30'
-  });
+function send() {
+  bc.postMessage({ cards, score, flipped, matched, mode, team, showLbl, vcw, vch, vcf, vcs });
 }
 
-function applyState(s) {
-  cards=s.cards; scores=s.scores; flipped=s.flipped; matched=s.matched;
-  mode=s.mode; currentTeam=s.currentTeam; showLabel=s.showLabel;
-  const root = document.documentElement;
-  if (s.cardW) root.style.setProperty('--card-w', s.cardW+'px');
-  if (s.cardH) root.style.setProperty('--card-h', s.cardH+'px');
-  if (s.fontF) root.style.setProperty('--font-size', s.fontF+'px');
-  renderScoreboard('s');
-  renderGrid('s');
+function recv(s) {
+  cards=s.cards; score=s.score; flipped=s.flipped; matched=s.matched;
+  mode=s.mode; team=s.team; showLbl=s.showLbl;
+  applyCSS(s.vcw, s.vch, s.vcf, s.vcs);
+  renderSB('s'); renderGrid('s');
 }
 
-// ===== 初期化 =====
+function applyCSS(cw, ch, cf, cs) {
+  const r = document.documentElement.style;
+  r.setProperty('--cw', cw+'px');
+  r.setProperty('--ch', ch+'px');
+  r.setProperty('--cf', cf+'px');
+  r.setProperty('--cscore', cs+'px');
+}
+
+// ===== 起動 =====
 document.addEventListener('DOMContentLoaded', () => {
-  if (isStudent) {
-    document.getElementById('student-layout').style.display = 'flex';
-    ch.postMessage('request');
-    // 先生画面からの応答がない場合、1秒後に再リクエスト
-    setTimeout(() => { if (!cards.length) ch.postMessage('request'); }, 1000);
-    setTimeout(() => { if (!cards.length) ch.postMessage('request'); }, 3000);
+  if (isS) {
+    document.getElementById('student').style.display = 'flex';
+    bc.postMessage('req');
   } else {
-    document.getElementById('teacher-layout').style.display = 'flex';
-    resetGame();
+    document.getElementById('teacher').style.display = 'flex';
+    reset();
   }
 });
 
-function openStudentWindow() {
-  const url = location.href.split('?')[0] + '?student';
-  window.open(url, '_blank');
-  setTimeout(broadcastState, 800);
+function openS() {
+  window.open(location.href.split('?')[0]+'?student', '_blank');
+  setTimeout(send, 800);
 }
 
 // ===== コントロール =====
-function setCount(n) {
-  cardCount = n;
-  document.querySelectorAll('.btn-count').forEach(b => b.classList.toggle('active', b.textContent === n+'枚'));
-  resetGame();
+function setN(n) {
+  N = n;
+  document.querySelectorAll('.bcnt').forEach(b => b.classList.toggle('on', b.textContent===n+'枚'));
+  reset();
 }
+
 function setMode(m) {
-  mode=m; currentTeam='red';
-  document.getElementById('btn-solo').className = 'btn-mode'+(m==='solo'?' active-solo':'');
-  document.getElementById('btn-team').className = 'btn-mode'+(m==='team'?' active-red':'');
-  resetGame();
+  mode=m; team='red';
+  document.getElementById('bsolo').className = 'bmode'+(m==='solo'?' solo':'');
+  document.getElementById('bteam').className = 'bmode'+(m==='team'?' red':'');
+  reset();
 }
-function updateCard() {
-  const w=document.getElementById('sl-w').value, h=document.getElementById('sl-h').value, f=document.getElementById('sl-f').value;
-  document.getElementById('val-w').textContent=w;
-  document.getElementById('val-h').textContent=h;
-  document.getElementById('val-f').textContent=f;
-  document.documentElement.style.setProperty('--card-w',w+'px');
-  document.documentElement.style.setProperty('--card-h',h+'px');
-  document.documentElement.style.setProperty('--font-size',f+'px');
-  broadcastState();
+
+function upd() {
+  vcw = +document.getElementById('sl-cw').value;
+  vch = +document.getElementById('sl-ch').value;
+  vcf = +document.getElementById('sl-cf').value;
+  vcs = +document.getElementById('sl-cs').value;
+  document.getElementById('v-cw').textContent = vcw;
+  document.getElementById('v-ch').textContent = vch;
+  document.getElementById('v-cf').textContent = vcf;
+  document.getElementById('v-cs').textContent = vcs;
+  applyCSS(vcw, vch, vcf, vcs);
+  renderGrid('t');
+  send();
 }
-function toggleFS() {
-  if(!document.fullscreenElement) document.documentElement.requestFullscreen();
+
+function goFS() {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen();
   else document.exitFullscreen();
 }
-function toggleLabel() {
-  showLabel=document.getElementById('toggle-label').checked;
-  document.querySelectorAll('.card-type').forEach(el=>el.classList.toggle('hidden-label',!showLabel));
-  broadcastState();
+
+function togLabel() {
+  showLbl = document.getElementById('tgl').checked;
+  document.querySelectorAll('.clabel').forEach(el => el.classList.toggle('hi', !showLbl));
+  send();
 }
 
 // ===== ゲーム =====
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-
-function resetGame() {
-  flipped=[];matched=[];locked=false;scores={solo:0,red:0,blue:0};currentTeam='red';
-  setMsg('カードをめくってね！');
-  document.getElementById('overlay').classList.remove('show');
-  const chosen=shuffle([...ALL_PAIRS]).slice(0,Math.min(cardCount/2,ALL_PAIRS.length));
-  cards=[];
-  chosen.forEach((p,i)=>{
-    cards.push({id:i*2,  pairId:i,type:'jido',word:p.jido,mc:''});
-    cards.push({id:i*2+1,pairId:i,type:'tado',word:p.tado,mc:''});
-  });
-  shuffle(cards);
-  renderScoreboard('t'); renderGrid('t');
-  broadcastState();
+function shuf(a) {
+  for (let i=a.length-1; i>0; i--) {
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
 }
 
-function setMsg(txt){ const el=document.getElementById('message-t'); if(el) el.textContent=txt; }
+function reset() {
+  flipped=[]; matched=[]; locked=false;
+  score={solo:0,red:0,blue:0}; team='red';
+  document.getElementById('ov').classList.remove('show');
 
-function renderScoreboard(side){
-  const sb=document.getElementById('scoreboard-'+side); if(!sb)return;
-  if(mode==='solo'){
-    sb.innerHTML=`<div class="score-box solo"><div class="score-name">スコア</div><div class="score-num" id="score-solo-${side}">${scores.solo}</div><div class="turn-label">ペア</div></div>`;
+  const chosen = shuf([...PAIRS]).slice(0, Math.min(N/2, PAIRS.length));
+  cards = [];
+  chosen.forEach((p,i) => {
+    cards.push({id:i*2,   pi:i, type:'jido', w:p.j, mc:''});
+    cards.push({id:i*2+1, pi:i, type:'tado', w:p.t, mc:''});
+  });
+  shuf(cards);
+
+  // スライダー値を読む
+  vcw = +document.getElementById('sl-cw').value;
+  vch = +document.getElementById('sl-ch').value;
+  vcf = +document.getElementById('sl-cf').value;
+  vcs = +document.getElementById('sl-cs').value;
+  applyCSS(vcw, vch, vcf, vcs);
+
+  renderSB('t');
+  renderGrid('t');
+  send();
+}
+
+function renderSB(side) {
+  const sb = document.getElementById('sb-'+side);
+  if (!sb) return;
+  if (mode === 'solo') {
+    sb.innerHTML = `<div class="sc-box solo">
+      <div class="sc-name">スコア</div>
+      <div class="sc-num">${score.solo}</div>
+      <div class="sc-turn">ペア</div>
+    </div>`;
   } else {
-    sb.innerHTML=`
-      <div class="score-box team-red ${currentTeam==='red'?'current-turn':''}" id="box-red-${side}">
-        <div class="score-name">🔴 赤チーム</div>
-        <div class="score-num">${scores.red}</div>
-        <div class="turn-label">${currentTeam==='red'?'← ターン':''}</div>
+    sb.innerHTML = `
+      <div class="sc-box t-red ${team==='red'?'cur':''}">
+        <div class="sc-name">🔴 赤チーム</div>
+        <div class="sc-num">${score.red}</div>
+        <div class="sc-turn">${team==='red'?'← ターン':''}</div>
       </div>
-      <div class="score-box team-blue ${currentTeam==='blue'?'current-turn':''}" id="box-blue-${side}">
-        <div class="score-name">🔵 青チーム</div>
-        <div class="score-num">${scores.blue}</div>
-        <div class="turn-label">${currentTeam==='blue'?'← ターン':''}</div>
+      <div class="sc-box t-blue ${team==='blue'?'cur':''}">
+        <div class="sc-name">🔵 青チーム</div>
+        <div class="sc-num">${score.blue}</div>
+        <div class="sc-turn">${team==='blue'?'← ターン':''}</div>
       </div>`;
   }
 }
 
-function getBestCols(n) {
-  if (n <= 4)  return 2;
-  if (n <= 8)  return 4;
-  if (n <= 12) return 4;
-  if (n <= 16) return 4;
-  if (n <= 20) return 5;
-  return 6;
-}
-
-function renderGrid(side){
-  const grid=document.getElementById('grid-'+side); if(!grid)return;
-  const cols = getBestCols(cards.length);
-  grid.style.gridTemplateColumns = `repeat(${cols}, var(--card-w))`;
-  const ro=(side==='s');
-  grid.innerHTML='';
-  cards.forEach((card, idx)=>{
-    const wrap=document.createElement('div');
-    let cls='card-wrap';
-    if(flipped.includes(card.id)||matched.includes(card.id)) cls+=' flipped';
-    if(matched.includes(card.id)) cls+=' '+(card.mc||'matched');
-    if(ro) cls+=' readonly';
-    wrap.className=cls; wrap.dataset.id=card.id;
-    wrap.innerHTML=`<div class="card-inner">
-      <div class="card-face card-back-face">
-        <span class="card-num">${idx+1}</span>
-      </div>
-      <div class="card-face card-front-face ${card.type}">
-        <div class="card-type${showLabel?'':' hidden-label'}">${card.type==='jido'?'自動詞':'他動詞'}</div>
-        <div class="card-word">${card.word}</div>
-      </div></div>`;
-    if(!ro) wrap.addEventListener('click',()=>flipCard(card.id));
-    grid.appendChild(wrap);
+function renderGrid(side) {
+  const g = document.getElementById('g-'+side);
+  if (!g) return;
+  const cols = COLS[cards.length] || Math.ceil(Math.sqrt(cards.length));
+  g.style.gridTemplateColumns = `repeat(${cols}, var(--cw))`;
+  const ro = (side === 's');
+  g.innerHTML = '';
+  cards.forEach((c, idx) => {
+    const d = document.createElement('div');
+    let cls = 'card';
+    if (flipped.includes(c.id) || matched.includes(c.id)) cls += ' fp';
+    if (matched.includes(c.id)) cls += ' ' + (c.mc || 'mp');
+    if (ro) cls += ' ro';
+    d.className = cls;
+    d.dataset.id = c.id;
+    d.innerHTML = `
+      <div class="ci">
+        <div class="cf back">${idx+1}</div>
+        <div class="cf front ${c.type}">
+          <div class="clabel${showLbl?'':' hi'}">${c.type==='jido'?'自動詞':'他動詞'}</div>
+          <div class="cword">${c.w}</div>
+        </div>
+      </div>`;
+    if (!ro) d.addEventListener('click', () => flip(c.id));
+    g.appendChild(d);
   });
 }
 
-function flipCard(id){
-  if(locked||flipped.includes(id)||matched.includes(id))return;
-  document.querySelector(`#grid-t .card-wrap[data-id="${id}"]`)?.classList.add('flipped');
+function flip(id) {
+  if (locked || flipped.includes(id) || matched.includes(id)) return;
+  document.querySelector(`#g-t .card[data-id="${id}"]`)?.classList.add('fp');
   flipped.push(id);
-  broadcastState();
-  if(flipped.length===2){locked=true;setTimeout(checkMatch,700);}
+  send();
+  if (flipped.length === 2) { locked = true; setTimeout(check, 700); }
 }
 
-function checkMatch(){
-  const [id1,id2]=flipped;
-  const c1=cards.find(c=>c.id===id1), c2=cards.find(c=>c.id===id2);
-  if(c1.pairId===c2.pairId&&c1.type!==c2.type){
-    matched.push(id1,id2);
-    const mc=mode==='team'?'matched-'+currentTeam:'matched';
-    c1.mc=mc; c2.mc=mc;
-    [id1,id2].forEach(id=>{
-      const w=document.querySelector(`#grid-t .card-wrap[data-id="${id}"]`);
-      if(w){w.classList.add(mc);w.style.cursor='default';}
+function check() {
+  const [a, b] = flipped;
+  const ca = cards.find(c=>c.id===a);
+  const cb = cards.find(c=>c.id===b);
+
+  if (ca.pi === cb.pi && ca.type !== cb.type) {
+    // 正解！
+    matched.push(a, b);
+    const mc = mode==='team' ? (team==='red' ? 'mr' : 'mb') : 'mp';
+    ca.mc = mc; cb.mc = mc;
+    [a, b].forEach(id => {
+      const el = document.querySelector(`#g-t .card[data-id="${id}"]`);
+      if (el) { el.classList.add(mc); el.style.cursor='default'; }
     });
-    if(mode==='solo'){scores.solo++;setMsg('✅ せいかい！');}
-    else{scores[currentTeam]++;setMsg((currentTeam==='red'?'🔴 赤':'🔵 青')+'チームのポイント！もう一回！');renderScoreboard('t');}
-    flipped=[];locked=false;
-    broadcastState();
-    if(matched.length===cards.length)setTimeout(showResult,500);
+    if (mode === 'solo') score.solo++;
+    else { score[team]++; }
+    flipped = []; locked = false;
+    renderSB('t');
+    send();
+    if (matched.length === cards.length) setTimeout(showRes, 500);
   } else {
-    setMsg('❌ ちがいます…');
-    [id1,id2].forEach(id=>{
-      const w=document.querySelector(`#grid-t .card-wrap[data-id="${id}"]`);
-      if(w){w.classList.add('shake');setTimeout(()=>w.classList.remove('flipped','shake'),600);}
+    // 不正解
+    [a, b].forEach(id => {
+      const el = document.querySelector(`#g-t .card[data-id="${id}"]`);
+      if (el) {
+        el.classList.add('shake');
+        setTimeout(() => el.classList.remove('fp', 'shake'), 620);
+      }
     });
-    if(mode==='team'){
-      currentTeam=currentTeam==='red'?'blue':'red';
-      setMsg('❌ ちがいます… '+(currentTeam==='red'?'🔴 赤':'🔵 青')+'チームのターン！');
-      document.getElementById('btn-team').className='btn-mode active-'+currentTeam;
-      renderScoreboard('t');
+    if (mode === 'team') {
+      team = team==='red' ? 'blue' : 'red';
+      document.getElementById('bteam').className = 'bmode ' + team;
+      renderSB('t');
     }
-    flipped=[];
-    setTimeout(()=>{locked=false;broadcastState();if(matched.length<cards.length)setMsg('カードをめくってね！');},800);
+    flipped = [];
+    setTimeout(() => { locked = false; send(); }, 820);
   }
 }
 
-function showResult(){
-  document.getElementById('overlay').classList.add('show');
-  const t=document.getElementById('result-title'),d=document.getElementById('result-detail');
-  if(mode==='solo'){t.textContent='🎉 クリア！';d.innerHTML=`スコア：<strong>${scores.solo}</strong>ペア<br>全部そろえました！`;}
-  else{
-    const w=scores.red>scores.blue?'🔴 赤チーム':scores.blue>scores.red?'🔵 青チーム':null;
-    t.textContent=w?`${w} の勝ち！🏆`:'🤝 引き分け！';
-    d.innerHTML=`🔴 赤：<strong>${scores.red}</strong>ペア　🔵 青：<strong>${scores.blue}</strong>ペア`;
+function showRes() {
+  document.getElementById('ov').classList.add('show');
+  const t = document.getElementById('ov-t');
+  const d = document.getElementById('ov-d');
+  if (mode === 'solo') {
+    t.textContent = '🎉 クリア！';
+    d.innerHTML = `<strong>${score.solo}</strong>ペア！全部そろえました！`;
+  } else {
+    const w = score.red>score.blue ? '🔴 赤チーム' : score.blue>score.red ? '🔵 青チーム' : null;
+    t.textContent = w ? `${w}の勝ち！🏆` : '🤝 引き分け！';
+    d.innerHTML = `🔴 赤：<strong>${score.red}</strong>ペア　🔵 青：<strong>${score.blue}</strong>ペア`;
   }
-  broadcastState();
+  send();
 }
 </script>
 </body>
